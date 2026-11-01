@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TreeHugger</title>
+  <link rel="stylesheet" href="viewer.css">
+  <link rel="stylesheet" href="specificity.css">
+  <script src="viewer.js" type="module"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="icon48.png" width="38" height="38" alt=""><div><h1>TreeHugger</h1><span>Die Struktur einer Webseite erkunden</span></div></div>
+    <div class="top-actions"><button id="refresh" class="primary">Seite neu einlesen</button><button id="export">SVG speichern</button><a href="hilfe.html" target="_blank">Hilfe</a></div>
+  </header>
+  <div class="source"><strong id="pageTitle">Webseite wird eingelesen …</strong><span id="pageUrl"></span><span id="captureTime"></span></div>
+  <nav class="modebar" aria-label="Ansicht"><button id="treeMode" aria-pressed="true">DOM-Baum</button><button id="selectionMode" aria-pressed="false">Auswahl &amp; Rückgabe</button><button id="sourceMode" aria-pressed="false">Quellcode</button><span>Jedes Element ist ein Node. Sammlungen enthalten Verweise auf Elemente oder Knoten.</span></nav>
+  <form id="scopeForm" class="controls">
+    <label class="scope">Ausschnitt über CSS-Selektor <input id="scope" placeholder="Ganze Seite · oder z. B. #kurse" autocomplete="off" spellcheck="false" maxlength="4096"></label>
+    <button type="submit">Ausschnitt anzeigen</button>
+    <label><input type="checkbox" id="textNodes" checked> Textknoten</label>
+    <label><input type="checkbox" id="whiteSpace"> Leerraum</label>
+    <label><input type="checkbox" id="comments" checked> Kommentare</label>
+  </form>
+  <div class="workspace" id="workspace">
+    <main class="canvas-area" id="treePane">
+      <div class="canvas-toolbar"><button id="focusToggle" type="button" aria-pressed="false" title="Den ganzen Inhaltsbereich für den Baum nutzen" disabled>Nur Baum</button><div class="zoom"><button id="zoomOut" aria-label="Verkleinern">−</button><output id="zoomLabel">100 %</output><button id="zoomIn" aria-label="Vergrößern">+</button><button id="fit">Einpassen</button></div><label class="depth-label">Offene Ebenen <select id="depth"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="8">8</option></select></label><button id="noticeToggle" type="button" aria-controls="message" aria-expanded="false" hidden>Hinweise</button><span id="count"></span></div>
+      <div id="message" hidden>
+        <div id="messageContent" role="status"></div>
+        <button id="closeNotices" type="button" aria-label="Hinweise schließen" title="Hinweise schließen">×</button>
+      </div>
+      <div id="viewport" tabindex="0" aria-label="DOM-Diagramm. Zum Verschieben den Hintergrund ziehen oder scrollen."><div id="drawing"><svg id="tree" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="DOM-Baum mit Eltern-Kind-Verbindungen"></svg></div><div id="empty">Das Diagramm wird vorbereitet.</div></div>
+      <div class="legend"><div id="nodeLegend" class="node-legend"></div><details class="element-group-legend"><summary>Elementgruppen</summary><div id="elementGroupLegend"></div></details><small>Obere Farbleiste: Knotentyp. Zweite Farbleiste bei Elementen: Elementgruppe und Bedeutung. Alle Baumkarten sind einzelne Nodes. Linien verbinden Eltern mit direkten Kindern.</small></div>
+    </main>
+    <section id="selectionPane" class="selection-area" hidden aria-label="Auswahlmethoden und Rückgaben">
+      <div class="selection-intro"><h2>Was liefert eine DOM-Auswahl zurück?</h2><p>Führen Sie eine Methode auf der Quellseite aus. Das Ergebnis zeigt seinen Typ und seine einzelnen Einträge.</p></div>
+      <form id="selectionForm"><label>Auswahlmethode<select id="selectionMethod"><option value="querySelector">querySelector</option><option value="querySelectorAll" selected>querySelectorAll</option><option value="getElementById">getElementById</option><option value="getElementsByClassName">getElementsByClassName</option><option value="getElementsByTagName">getElementsByTagName</option></select></label><label>Suchwert<input id="selectionQuery" value=".hinweis" spellcheck="false" autocomplete="off"></label><button id="runSelection" class="primary">Auswahl ausführen</button></form>
+      <p id="methodHint" class="method-hint"></p><pre id="selectionCode"></pre>
+      <div id="selectionResult" aria-live="polite"><p class="explanation">Eine einzelne Rückgabe und eine Sammlung sind unterschiedliche Dinge. Auch eine Sammlung mit genau einem Eintrag bleibt eine Sammlung.</p></div>
+    </section>
+    <section id="sourcePane" class="source-area" hidden aria-label="Quellcode der Webseite">
+      <div class="code-header">
+        <nav class="code-tabs" aria-label="Codesprache"><button id="codeTab-html" type="button" aria-pressed="true">HTML</button><button id="codeTab-css" type="button" aria-pressed="false">CSS</button><button id="codeTab-javascript" type="button" aria-pressed="false">JavaScript</button></nav>
+        <button id="specificityToggle" type="button" aria-expanded="false" aria-controls="specificityPanel">Spezifität erklären</button>
+        <span id="codeSourceInfo">Momentaufnahme der Quellseite</span>
+        <button id="codeFocus" type="button" aria-pressed="false" title="Den ganzen Inhaltsbereich für den Code nutzen">Nur Code</button>
+      </div>
+      <section id="specificityPanel" hidden aria-label="CSS-Spezifität"></section>
+      <div class="code-workbench">
+        <div class="code-sidebar"><div class="code-sidebar-heading">Quellen <span id="codeFileCount"></span></div><div id="codeFiles" aria-label="Gefundene Quellen"></div></div>
+        <div class="code-editor">
+          <div class="code-file-heading"><div><strong id="codeFileTitle">Keine Quelle ausgewählt</strong><span id="codeFileOrigin" class="code-origin"></span><span id="codeFileUrl"></span></div><button id="loadCodeFile" type="button" class="primary" hidden>Datei laden</button><button id="openLocalCodeFile" type="button" class="primary" hidden>Lokale Datei öffnen</button><input id="localCodeFile" type="file" accept=".js,.mjs,.cjs,.css,.txt,.json" hidden></div>
+          <div class="code-tools">
+            <label><input id="codePretty" type="checkbox" checked> Einrücken</label><label><input id="codeWrap" type="checkbox"> Zeilenumbruch</label><label><input id="codeLight" type="checkbox"> Hell</label>
+            <div class="code-font"><button id="codeSmaller" type="button" aria-label="Schrift verkleinern">A−</button><output id="codeFontSize">16 px</output><button id="codeLarger" type="button" aria-label="Schrift vergrößern">A+</button></div>
+            <button id="copyCode" type="button" disabled>Eingelesenen Code kopieren</button>
+          </div>
+          <div class="code-search"><label for="codeSearch">Im Code suchen</label><input id="codeSearch" type="search" placeholder="Text · Groß-/Kleinschreibung beachten" maxlength="500" autocomplete="off" spellcheck="false"><output id="codeMatches" aria-live="polite"></output><button id="codePreviousMatch" type="button" aria-label="Vorheriger Treffer" disabled>↑</button><button id="codeNextMatch" type="button" aria-label="Nächster Treffer" disabled>↓</button><span id="codeViewKind"></span></div>
+          <div id="codeStatus" class="code-status" role="status" hidden></div>
+          <div id="codeScroll" tabindex="0" aria-label="Quellcode mit Zeilennummern"><div id="codeEmpty">Öffnen Sie eine Quelle.</div><div id="codeRows"></div></div>
+          <div id="codePager" class="code-pager" hidden><button id="codePreviousPage" type="button">← Vorheriger Abschnitt</button><output id="codePageLabel"></output><button id="codeNextPage" type="button">Nächster Abschnitt →</button></div>
+        </div>
+      </div>
+      <details id="codeNotes" class="code-notes" hidden><summary>Hinweise zur Momentaufnahme</summary><ul id="codeNotesList"></ul></details>
+    </section>
+    <aside id="details" aria-label="Details zum gewählten Knoten"><div class="aside-heading">Knoten untersuchen</div><p>Klicken Sie auf einen Knoten im Diagramm.</p></aside>
+  </div>
+  <footer class="viewer-footer">
+    <span>Node = Knoten. Jedes Element ist auch ein Node. NodeList und HTMLCollection sind Sammlungen, keine Knoten. Eine HTML-Liste wie &lt;ul&gt; ist dagegen ein einzelnes Element.</span>
+    <details class="project-credits">
+      <summary>Projekt · Gino Peduto</summary>
+      <div class="project-credits-content">
+        <p>Idee, Konzeption und fachliche Projektleitung: <strong>Gino Peduto</strong></p>
+        <p>Technische Umsetzung mit KI-Unterstützung durch OpenAI Codex.</p>
+      </div>
+    </details>
+  </footer>
+</body>
+</html>
+

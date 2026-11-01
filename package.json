@@ -1,6 +1,6 @@
 {
-  "name": "dom-baum-unterricht",
-  "version": "1.3.2",
+  "name": "treehugger",
+  "version": "1.3.3",
   "private": true,
   "description": "Chrome-Erweiterung zur Visualisierung des DOM und zum Erkunden von Quellcode und CSS-Spezifität im Unterricht.",
   "type": "module",

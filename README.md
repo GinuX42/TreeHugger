@@ -1,8 +1,8 @@
-# DOM-Baum · Unterricht
+# TreeHugger
 
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
-**Version 1.3.2** · [Installationspaket herunterladen](26_11_01_DOM_Baum_1_3_2.zip?raw=true) · [Bebilderte Anleitung](26_10_31_Installation.html)
+**Version 1.3.3** · [Installationspaket herunterladen](26_11_01_TreeHugger_1_3_3.zip?raw=true) · [Bebilderte Anleitung](26_11_01_Installation.html)
 
 Die HTML-Anleitung enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
 
@@ -12,7 +12,7 @@ Die HTML-Anleitung enthält ihre Bilder bereits eingebettet. Laden Sie sie herun
 2. Öffnen Sie `chrome://extensions` in Chrome.
 3. Schalten Sie oben rechts den **Entwicklermodus** ein.
 4. Klicken Sie auf **Entpackte Erweiterung laden** und wählen Sie den Unterordner **Erweiterung** aus. Darin liegt die Datei `manifest.json`.
-5. Öffnen Sie eine Webseite und starten Sie **DOM-Baum · Unterricht** über das Puzzleteil-Symbol in Chrome. Sie können das Symbol dort anheften.
+5. Öffnen Sie eine Webseite und starten Sie **TreeHugger** über das Puzzleteil-Symbol in Chrome. Sie können das Symbol dort anheften.
 
 Für lokale HTML-Seiten aktivieren Sie in den Details der Erweiterung zusätzlich **Zugriff auf Datei-URLs zulassen**. Chrome-interne Seiten wie `chrome://settings` können nicht untersucht werden. Bewahren Sie den Erweiterungsordner auf; Chrome verwendet die entpackten Dateien weiterhin.
 
@@ -42,7 +42,7 @@ Die obere Farbleiste einer Baumkarte bezeichnet den Knotentyp. Die zweite Leiste
 
 ## Aktualisieren
 
-Ersetzen Sie die bisherigen Erweiterungsdateien vollständig durch die neue Fassung, einschließlich des Unterordners `vendor`. Laden Sie DOM-Baum anschließend unter `chrome://extensions` neu. Schließen Sie alte Ansichts-Tabs und öffnen Sie das Tool auf der Quellseite erneut über sein Symbol.
+Ersetzen Sie die bisherigen Erweiterungsdateien vollständig durch die neue Fassung, einschließlich des Unterordners `vendor`. Laden Sie TreeHugger anschließend unter `chrome://extensions` neu. Schließen Sie alte Ansichts-Tabs und öffnen Sie das Tool auf der Quellseite erneut über sein Symbol.
 
 ## Verarbeitung und Grenzen
 
@@ -58,9 +58,9 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die 103 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.3.2 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
+Alternativ genügt `node --test` im Projektordner. Die 103 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.3.3 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
 
-Weitere Einzelheiten stehen in den [Prüfhinweisen](26_10_31_Pruefhinweise.md).
+Weitere Einzelheiten stehen in den [Prüfhinweisen](26_11_01_Pruefhinweise.md).
 
 ## Projektangaben und Fremdkomponenten
 
@@ -68,4 +68,4 @@ Weitere Einzelheiten stehen in den [Prüfhinweisen](26_10_31_Pruefhinweise.md).
 
 Technische Umsetzung mit KI-Unterstützung durch OpenAI Codex.
 
-Die [Projektangaben](26_10_31_Projektangaben.md) beschreiben die Beiträge. Die lokale Formatierungsbibliothek **js-beautify** wird einschließlich ihrer [MIT-Lizenz](Erweiterung/vendor/js-beautify/LICENSE) und ihres [Herkunftsnachweises](Erweiterung/vendor/js-beautify/provenance.json) mitgeliefert. Diese Bibliothekslizenz ist keine pauschale Lizenzangabe für das gesamte Projekt.
+Die [Projektangaben](26_11_01_Projektangaben.md) beschreiben die Beiträge. Die lokale Formatierungsbibliothek **js-beautify** wird einschließlich ihrer [MIT-Lizenz](Erweiterung/vendor/js-beautify/LICENSE) und ihres [Herkunftsnachweises](Erweiterung/vendor/js-beautify/provenance.json) mitgeliefert. Diese Bibliothekslizenz ist keine pauschale Lizenzangabe für das gesamte Projekt.

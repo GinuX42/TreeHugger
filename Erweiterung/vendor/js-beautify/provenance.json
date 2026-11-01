@@ -1,0 +1,15 @@
+{
+  "name": "js-beautify",
+  "version": "2.0.3",
+  "license": "MIT",
+  "homepage": "https://github.com/beautifier/js-beautify",
+  "source": "https://registry.npmjs.org/js-beautify/-/js-beautify-2.0.3.tgz",
+  "packageIntegrity": "sha512-cyFbh3tkPhknnTD/0bLf0T0yy2ZIbqL05mttzbt4y1Zfr7NxqXQZ62dkBLKs3oHH/lpjmDRAnciJiSUyOy8XwQ==",
+  "filesSha256": {
+    "LICENSE": "2829716775dfdac45467d7384d8eb1bcaa1ae186994eedca0f513fb09038c134",
+    "beautify.js": "e6faadb6576a35467538daee02f028152808b5b4d82f80aca57e6bfeb4ba11c7",
+    "beautify-css.js": "511af9357a595716883760560597f7872ad3c7946dc9e45f00b453f46ab317f3",
+    "beautify-html.js": "ca99c4bbcb547b7944dd42ee0695c4c4b703b06d5a6c30ebbe914bd70c174f4f"
+  },
+  "note": "Unveränderte Browser-Bundles. Nur lokal im Formatierungs-Worker verwendet. Keine nachgeladenen Skripte, keine Unpacker, keine Installation ausgeführt."
+}

@@ -2,7 +2,7 @@
 
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
-**Version 1.3.3** · [Installationspaket herunterladen](26_11_01_TreeHugger_1_3_3.zip?raw=true) · [Bebilderte Anleitung](26_11_01_Installation.html)
+**Version 1.3.3** · [Installationspaket herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.3.3/26_11_01_TreeHugger_1_3_3.zip) · [Versionsseite](https://github.com/GinuX42/TreeHugger/releases/tag/v1.3.3) · [Bebilderte Anleitung](26_11_01_Installation.html)
 
 Die HTML-Anleitung enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
 

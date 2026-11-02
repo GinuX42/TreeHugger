@@ -1,5 +1,7 @@
 # TreeHugger
 
+**Aktueller Code: 1.3.4 (02.11.2026).** Unter dem CSS-Selektor erklärt ein aufklappbarer Merksatz die Position ab 1 und den JavaScript-Index ab 0. Baumkarten zeigen vorhandene Attribute im öffnenden Tag; gekürzte Angaben sind gekennzeichnet und in den Knotendetails nachlesbar. Für diesen Stand den Ordner `Erweiterung` aus dem aktuellen Repository verwenden. Das separat veröffentlichte Installationspaket bleibt bei Version 1.3.3.
+
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
 **Version 1.3.3** · [Installationspaket herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.3.3/26_11_01_TreeHugger_1_3_3.zip) · [Versionsseite](https://github.com/GinuX42/TreeHugger/releases/tag/v1.3.3) · [Bebilderte Anleitung](26_11_01_Installation.html)
@@ -58,7 +60,7 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die 103 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.3.3 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
+Alternativ genügt `node --test` im Projektordner. Die 106 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.3.4 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
 
 Weitere Einzelheiten stehen in den [Prüfhinweisen](26_11_01_Pruefhinweise.md).
 

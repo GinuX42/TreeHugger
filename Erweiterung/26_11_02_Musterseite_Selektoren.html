@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TreeHugger · Musterseite Selektoren</title>
+  <style>
+    body { max-width: 760px; margin: 40px auto; padding: 0 24px; font: 18px/1.6 system-ui, sans-serif; color: #173149; background: #f6f8fb; }
+    h1 { font-size: 1.8rem; line-height: 1.2; }
+    main { padding: 20px; border: 3px solid #005bbd; border-radius: 12px; background: white; }
+    .karte { padding: 16px; border-left: 6px solid #b40050; background: #fff0f6; }
+    .details { margin-left: 24px; padding: 4px 16px; border-left: 4px solid #007443; background: #eefbf4; }
+    code { padding: 2px 4px; background: #e5edf5; overflow-wrap: anywhere; }
+    footer { margin-top: 24px; color: #40566a; }
+  </style>
+</head>
+<body>
+  <header id="einfuehrung">
+    <h1>Kursportal: Selektoren untersuchen</h1>
+    <p>Öffnen Sie TreeHugger und wählen Sie den Ausschnitt <code>#kurse</code>. Der blau umrandete Bereich enthält die Elemente für Ihre Untersuchung.</p>
+    <p>Vergleichen Sie <code>#kurse &gt; .hinweis</code> mit <code>#kurse .hinweis</code>: Das Zeichen <code>&gt;</code> beschränkt die Auswahl auf direkte Kinder des Containers. Das Leerzeichen erlaubt passende Nachfahren auf allen Ebenen.</p>
+  </header>
+  <main id="kurse">
+    <section id="webkurs" class="karte aktiv">
+      <h2 id="kurstitel">Webentwicklung</h2>
+      <p id="frei" class="hinweis">A: Plätze frei</p>
+      <div class="details">
+        <p id="voraussetzung" class="hinweis">B: Grundkenntnisse in HTML</p>
+      </div>
+    </section>
+    <p id="kontakt" class="hinweis">C: Kontakt zum Kursbüro</p>
+  </main>
+  <footer id="erkunden">
+    <p>Nutzen Sie „Unterricht → Auswahl auf der aktuellen Webseite“, um eigene Rückgaben vorherzusagen. Formulieren Sie zunächst Ihre Vermutung zu Typ, Anzahl und Reihenfolge der Treffer.</p>
+  </footer>
+</body>
+</html>

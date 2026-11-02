@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TreeHugger · Musterseite DOM-Veränderungen</title>
+  <style>
+    body { max-width: 760px; margin: 40px auto; padding: 0 24px; font: 18px/1.6 system-ui, sans-serif; color: #173149; background: #f6f8fb; }
+    h1 { font-size: 1.8rem; line-height: 1.2; }
+    main { padding: 20px; border: 3px solid #005bbd; border-radius: 12px; background: white; }
+    .hinweis { padding: 12px; border-left: 6px solid #b40050; background: #fff0f6; }
+    button { padding: 10px 14px; border: 2px solid #005bbd; border-radius: 6px; background: white; color: #00468f; font: inherit; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    button:focus-visible { outline: 3px solid #ad6500; outline-offset: 3px; }
+    .aktionen { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+    code { padding: 2px 4px; background: #e5edf5; }
+    output { display: block; min-height: 2em; color: #702082; font-weight: 600; white-space: pre-wrap; }
+    footer { margin-top: 24px; color: #40566a; }
+  </style>
+</head>
+<body>
+  <header id="einfuehrung">
+    <h1>Kursliste: Das DOM verändern</h1>
+    <p>Beim Öffnen dieser Seite werden zwei Sammlungen gespeichert: einmal mit <code>getElementsByClassName("hinweis")</code>, einmal mit <code>querySelectorAll(".hinweis")</code>.</p>
+    <p>Ergänzen oder entfernen Sie einen Absatz. Überlegen Sie, wie sich das auf beide gespeicherten Sammlungen auswirkt. Decken Sie deren Längen erst danach auf.</p>
+  </header>
+  <main id="kurse">
+    <p id="kurs-1" class="hinweis">Kurs 1: HTML-Grundlagen</p>
+  </main>
+  <div id="steuerung" class="aktionen">
+    <button id="ergaenzen" type="button">Absatz ergänzen</button>
+    <button id="entfernen" type="button">Letzten Absatz entfernen</button>
+    <button id="neustart" type="button">Seite zurücksetzen</button>
+  </div>
+  <section id="vergleich" aria-label="Gespeicherte Sammlungen vergleichen">
+    <button id="aufdecken" type="button">Gespeicherte Sammlungen anzeigen</button>
+    <output id="ergebnis" aria-live="polite"></output>
+  </section>
+  <footer id="erkunden">
+    <p>Untersuchen Sie mit TreeHugger den Ausschnitt <code>#kurse</code>. Nach einer Änderung klicken Sie dort auf „Seite neu einlesen“. Eine neue Abfrage in TreeHugger erfasst den aktuellen Stand; die hier gespeicherten Sammlungen stammen weiterhin vom Öffnen dieser Musterseite.</p>
+    <p>„Seite zurücksetzen“ lädt diese Musterseite neu und legt auch die Sammlungen neu an.</p>
+  </footer>
+  <script>
+    const kursliste = document.querySelector("#kurse");
+    const lebend = document.getElementsByClassName("hinweis");
+    const statisch = document.querySelectorAll(".hinweis");
+    const ergebnis = document.querySelector("#ergebnis");
+    const ergaenzen = document.querySelector("#ergaenzen");
+    const entfernen = document.querySelector("#entfernen");
+    let naechsteNummer = 2;
+
+    function aktualisiereBedienung() {
+      ergebnis.textContent = "";
+      ergaenzen.disabled = kursliste.children.length >= 10;
+      entfernen.disabled = kursliste.children.length === 0;
+    }
+
+    ergaenzen.addEventListener("click", () => {
+      if (kursliste.children.length >= 10) return;
+      const absatz = document.createElement("p");
+      absatz.id = "kurs-" + naechsteNummer;
+      absatz.className = "hinweis";
+      absatz.textContent = "Kurs " + naechsteNummer + ": Neuer Kurs";
+      naechsteNummer++;
+      kursliste.append(absatz);
+      aktualisiereBedienung();
+    });
+
+    entfernen.addEventListener("click", () => {
+      kursliste.lastElementChild?.remove();
+      aktualisiereBedienung();
+    });
+
+    document.querySelector("#aufdecken").addEventListener("click", () => {
+      ergebnis.textContent = "Gespeicherte HTMLCollection: length = " + lebend.length
+        + "\nGespeicherte NodeList: length = " + statisch.length;
+    });
+
+    document.querySelector("#neustart").addEventListener("click", () => location.reload());
+    aktualisiereBedienung();
+  </script>
+</body>
+</html>

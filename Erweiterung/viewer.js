@@ -9,6 +9,7 @@ import {isWhitespaceNode} from "./node-presentation.js";
 import {createNoticeView} from "./notice-view.js";
 import {createFocusView} from "./focus-view.js";
 import {createSourceView} from "./source-view.js";
+import {createTeachingView} from "./teaching-view.js";
 
 const source = createSourceClient(location, globalThis.chrome?.runtime);
 const state = {
@@ -23,6 +24,7 @@ const state = {
   capturePending: false,
   selectionPending: false,
   sourcePending: false,
+  teachingPending: false,
   notices: []
 };
 
@@ -57,12 +59,22 @@ const sourceView = createSourceView({
   }
 });
 
+const teachingView = createTeachingView({
+  request: source.request,
+  getSnapshot: () => ({snapshot: state.snapshot, nodes: state.nodes, selectedId: state.selectedId}),
+  isDemo: !source.available,
+  onBusyChange: pending => {
+    state.teachingPending = pending;
+    updateButtons();
+  }
+});
+
 function readFilters() {
   return {text: byId("textNodes").checked, whitespace: byId("whiteSpace").checked, comments: byId("comments").checked};
 }
 
 function updateButtons() {
-  const pendingByMode = {tree: state.capturePending, selection: state.selectionPending, source: state.sourcePending};
+  const pendingByMode = {tree: state.capturePending, selection: state.selectionPending, source: state.sourcePending, teaching: state.teachingPending};
   byId("refresh").disabled = pendingByMode[state.mode];
   byId("export").disabled = state.mode !== "tree" || !state.snapshot || state.capturePending;
   byId("focusToggle").disabled = state.mode !== "tree" || !state.snapshot;
@@ -71,21 +83,26 @@ function updateButtons() {
 function setMode(mode) {
   if (mode !== "tree") focusView.exit();
   if (mode !== "source") sourceView.deactivate();
+  if (mode !== "teaching") teachingView.deactivate();
   state.mode = mode;
   const showTree = mode === "tree";
   byId("workspace").classList.toggle("selection-mode", mode === "selection");
   byId("workspace").classList.toggle("source-mode", mode === "source");
+  byId("workspace").classList.toggle("teaching-mode", mode === "teaching");
   for (const id of ["treePane", "details", "scopeForm"]) byId(id).hidden = !showTree;
   byId("selectionPane").hidden = mode !== "selection";
   byId("sourcePane").hidden = mode !== "source";
+  byId("teachingPane").hidden = mode !== "teaching";
   byId("treeMode").setAttribute("aria-pressed", String(showTree));
   byId("selectionMode").setAttribute("aria-pressed", String(mode === "selection"));
   byId("sourceMode").setAttribute("aria-pressed", String(mode === "source"));
-  const refreshLabels = {tree: "Seite neu einlesen", selection: "Auswahl erneut ausführen", source: "Quellcode neu einlesen"};
+  byId("teachingMode").setAttribute("aria-pressed", String(mode === "teaching"));
+  const refreshLabels = {tree: "Seite neu einlesen", selection: "Auswahl erneut ausführen", source: "Quellcode neu einlesen", teaching: "Neue Vorhersage"};
   setText(byId("refresh"), refreshLabels[mode]);
   updateButtons();
   if (showTree) treeView.applyZoom();
   if (mode === "source") sourceView.activate();
+  if (mode === "teaching") teachingView.activate();
 }
 
 function resetExpandedBranches() {
@@ -207,6 +224,7 @@ async function capture() {
 byId("refresh").addEventListener("click", () => {
   if (state.mode === "source") sourceView.load();
   else if (state.mode === "selection") selectionView.run();
+  else if (state.mode === "teaching") teachingView.refresh();
   else capture();
 });
 byId("scopeForm").addEventListener("submit", event => {
@@ -216,6 +234,7 @@ byId("scopeForm").addEventListener("submit", event => {
 byId("treeMode").addEventListener("click", () => setMode("tree"));
 byId("selectionMode").addEventListener("click", () => setMode("selection"));
 byId("sourceMode").addEventListener("click", () => setMode("source"));
+byId("teachingMode").addEventListener("click", () => setMode("teaching"));
 byId("export").addEventListener("click", () => treeView.exportSvg(state.snapshot?.title ?? "DOM-Baum"));
 byId("depth").addEventListener("change", () => {
   resetExpandedBranches();

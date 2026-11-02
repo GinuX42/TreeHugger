@@ -1,6 +1,6 @@
 # TreeHugger
 
-**Aktueller Code: 1.3.4 (02.11.2026).** Unter dem CSS-Selektor erklärt ein aufklappbarer Merksatz die Position ab 1 und den JavaScript-Index ab 0. Baumkarten zeigen vorhandene Attribute im öffnenden Tag; gekürzte Angaben sind gekennzeichnet und in den Knotendetails nachlesbar. Für diesen Stand den Ordner `Erweiterung` aus dem aktuellen Repository verwenden. Das separat veröffentlichte Installationspaket bleibt bei Version 1.3.3.
+**Aktueller Code: 1.4.0 (02.11.2026).** Der neue Reiter **Unterricht** enthält offene Vorhersageaufgaben, eine Quizrunde mit sechs Fragen und drei übersichtliche Musterseiten. Für diesen Stand oben **Code → Download ZIP** wählen, das Repository entpacken und dessen Ordner `Erweiterung` verwenden. Das separat veröffentlichte Installationspaket bleibt bei Version 1.3.3 und enthält den Unterrichtsmodus noch nicht.
 
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
@@ -27,6 +27,21 @@ Wer das Repository herunterlädt oder klont, kann ebenfalls dessen Unterordner *
 - **Auswahl & Rückgabe:** Auswahlmethoden ausprobieren und erkennen, ob ein einzelnes Element, eine Sammlung oder `null` zurückgegeben wird.
 - **Quellcode:** HTML, CSS und JavaScript mit Syntaxfarben, Zeilennummern, Suche, Schriftgröße, Zeilenumbruch und großer Code-Ansicht. HTML zeigt den aktuellen DOM-Stand. Die Herkunft jeder Quelle ist beschriftet.
 - **CSS-Spezifität:** Selektoren in die Gruppen A (IDs), B (Klassen, Attribute, Pseudoklassen) und C (Elementnamen, Pseudoelemente) zerlegen und miteinander vergleichen. Beispiele und Erklärungen ordnen die Spezifität in die CSS-Kaskade ein.
+- **Unterricht:** Rückgaben zuerst vorhersagen und begründen, anschließend Ergebnis und Erklärung aufdecken. Mit eingebauten Beispielen, Kindknoten des gewählten Elements oder eigenen Auswahlabfragen auf der Quellseite.
+
+## Unterricht und Quizrunde
+
+Öffnen Sie **Unterricht → Quizrunde starten**. Die sechs offenen Fragen behandeln `querySelector`, `querySelectorAll`, fehlende Treffer, `children` und `childNodes`, CSS-Positionen gegenüber JavaScript-Indizes sowie lebende und statische Sammlungen. Antworten Sie mündlich oder tragen Sie Ihre Begründung in das freiwillige Textfeld ein. **Ergebnis aufdecken** zeigt die Musterantwort und ihre Erklärung; danach führt **Nächste Aufgabe** weiter. Es gibt keine automatische Bewertung oder Note.
+
+Außerhalb der Quizrunde lassen sich Beispiele einzeln wählen. Für eigene Aufgaben wählen Sie im DOM-Baum ein Element und dann **Kindknoten des gewählten Elements**, oder verwenden Sie **Auswahl auf der aktuellen Webseite** mit einer Auswahlmethode und einem Suchwert. **Aufgabe vorbereiten** hält das Ergebnis als Momentaufnahme fest, zeigt es aber erst nach dem Aufdecken. Eine neue Aufgabe oder ein Ansichtswechsel löscht die freiwillige Notiz. Eingaben werden nicht gespeichert oder übertragen.
+
+Unter **Musterseiten für den Unterricht** stehen drei eigenständige HTML-Dateien zum Herunterladen bereit:
+
+- **Selektoren: Kursportal** – wenige Elemente mit IDs, Klassen, direkten Kindern und tieferen Nachfahren; Baum-Ausschnitt `#kurse`.
+- **Kindknoten: Text und Leerraum** – ein Absatz, ein Kommentar und die Leerraum-Textknoten dazwischen; Ausschnitt `#kurs`.
+- **DOM-Veränderungen: Kursliste** – Absätze ergänzen und entfernen; die beim Öffnen gespeicherten Sammlungen anschließend vergleichen; Ausschnitt `#kurse`.
+
+Öffnen Sie die heruntergeladene Datei in Chrome und starten Sie dort TreeHugger. Für lokale Dateien muss **Zugriff auf Datei-URLs zulassen** aktiviert sein. Nach einer DOM-Änderung liest **Seite neu einlesen** die neue Struktur ein. Die Musterseiten funktionieren ohne externe Dateien und ohne Internetverbindung.
 
 ## Lokale JavaScript- und CSS-Dateien lesen
 
@@ -60,7 +75,7 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die 106 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.3.4 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
+Alternativ genügt `node --test` im Projektordner. Die 128 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabeninhalte, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.4.0 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
 
 Weitere Einzelheiten stehen in den [Prüfhinweisen](26_11_01_Pruefhinweise.md).
 

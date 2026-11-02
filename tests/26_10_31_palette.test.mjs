@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import test from "node:test";
 import {NODE_COLORS, COLLECTION_COLORS, ELEMENT_GROUP_COLORS} from "../Erweiterung/palette.js";
-import {getNodeKind, NODE_LEGEND_TYPES} from "../Erweiterung/node-presentation.js";
+import {getNodeKind, getOpeningTag, getTagPreview, NODE_LEGEND_TYPES} from "../Erweiterung/node-presentation.js";
 import {ELEMENT_GROUPS, describeElement} from "../Erweiterung/semantics.js";
 import {renderNodeLegend, renderElementGroupLegend} from "../Erweiterung/legend.js";
 import {createTreeView} from "../Erweiterung/tree-view.js";
@@ -65,6 +65,7 @@ class Element {
     this.value = "";
   }
   set textContent(value) { this.text = String(value); this.children = []; }
+  set innerHTML(_value) { throw new Error("Page content must remain plain text"); }
   get textContent() { return this.text + this.children.map(child => child.textContent).join(" "); }
   replaceChildren(...children) { this.children = children; this.text = ""; }
   append(...children) { this.children.push(...children); }
@@ -77,6 +78,70 @@ class Element {
 function descendants(element) {
   return element.children.flatMap(child => [child, ...descendants(child)]);
 }
+
+test("Opening tags retain all captured attributes and escape attribute-value delimiters", () => {
+  const node = {localName: "input", attributes: [
+    {name: "id", value: "größe"}, {name: "disabled", value: ""},
+    {name: "title", value: 'A & B "<script>"\n'}
+  ]};
+  assert.equal(getOpeningTag(node), '<input id="größe" disabled="" title="A &amp; B &quot;&lt;script&gt;&quot;&#10;">');
+  assert.deepEqual(node.attributes[2], {name: "title", value: 'A & B "<script>"\n'});
+  assert.equal(getOpeningTag({localName: "h2", attributes: []}), "<h2>");
+});
+
+test("Tag previews wrap short tags and clearly mark long tags without losing the complete tooltip text", () => {
+  const short = getTagPreview({localName: "p", attributes: [{name: "id", value: "absatz"}, {name: "class", value: "hinweis"}]});
+  assert.deepEqual(short.lines, ['<p id="absatz" class="hinweis">']);
+  assert.equal(short.truncated, false);
+  const long = getTagPreview({localName: "a", attributes: [{name: "href", value: "https://example.com/" + "x".repeat(180)}, {name: "title", value: "Ziel"}]});
+  assert.equal(long.lines.length, 3);
+  assert.ok(long.lines.every(line => line.length <= 32));
+  assert.equal(long.truncated, true);
+  assert.ok(long.lines.at(-1).endsWith("…"));
+  assert.ok(long.fullTag.endsWith('title="Ziel">'));
+});
+
+test("Tree cards display attributes as text and expose omitted capture attributes honestly", () => {
+  const previous = globalThis.document;
+  const elements = new Map();
+  const get = id => {
+    if (!elements.has(id)) elements.set(id, new Element("div"));
+    return elements.get(id);
+  };
+  globalThis.document = {
+    activeElement: null, createElement: name => new Element(name),
+    createElementNS: (_namespace, name) => new Element(name), getElementById: get
+  };
+  try {
+    const node = {id: "test", type: 1, localName: "p", nodeName: "P", label: "<p>",
+      namespaceURI: "http://www.w3.org/1999/xhtml", childIds: [],
+      attributes: [{name: "id", value: "absatz"}, {name: "class", value: "hinweis"}]};
+    const state = {nodes: new Map([[node.id, node]]), rootId: node.id,
+      selectedId: node.id, expandedIds: new Set(), filters: {text: true, whitespace: true, comments: true}};
+    const treeView = createTreeView({onSelect() {}, onToggle() {}, onMessage() {}});
+    treeView.render(state);
+    let drawn = descendants(get("tree"));
+    assert.ok(drawn.some(element => element.tagName === "text" && element.textContent === '<p id="absatz" class="hinweis">'));
+    assert.ok(drawn.some(element => element.textContent === "2 Attribute · Details öffnen"));
+    node.attributes = [{name: "onclick", value: '<img src=x onerror="bad()">' + "x".repeat(200)}];
+    treeView.render(state);
+    drawn = descendants(get("tree"));
+    const title = drawn.find(element => element.tagName === "title");
+    assert.ok(title.textContent.includes('onclick="&lt;img src=x onerror=&quot;bad()&quot;&gt;'));
+    assert.ok(drawn.some(element => element.textContent === "1 Attribut · gekürzt · Details öffnen"));
+    assert.equal(drawn.some(element => element.tagName === "img" || element.attributes.has("onclick")), false);
+    node.attributesCount = 40;
+    treeView.render(state);
+    assert.ok(descendants(get("tree")).some(element => element.textContent === "1 von 40 Attributen · Details"));
+    node.attributes = [];
+    node.attributesCount = 0;
+    treeView.render(state);
+    assert.ok(descendants(get("tree")).some(element => element.textContent === "Keine Attribute"));
+  } finally {
+    if (previous === undefined) delete globalThis.document;
+    else globalThis.document = previous;
+  }
+});
 
 test("Tree, details, and selection preserve both color meanings and collection identities", async () => {
   const previous = globalThis.document;

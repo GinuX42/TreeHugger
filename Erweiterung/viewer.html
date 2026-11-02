@@ -21,6 +21,19 @@
     <label><input type="checkbox" id="textNodes" checked> Textknoten</label>
     <label><input type="checkbox" id="whiteSpace"> Leerraum</label>
     <label><input type="checkbox" id="comments" checked> Kommentare</label>
+    <details class="selector-help">
+      <summary><strong>Merksatz:</strong> CSS beschreibt die <strong>Position</strong> („das zweite Kind“), JavaScript verwendet einen <strong>Index</strong> (<code>[1]</code>).</summary>
+      <div class="selector-help-content">
+        <p><code>:nth-child(2)</code> bedeutet „zweites Kindelement“. Die <strong>2 ist eine Position, keine Anzahl von Kindern</strong>. CSS zählt hier ab <strong>1</strong>; der JavaScript-Zugriff auf eine Sammlung beginnt bei <strong>0</strong>.</p>
+        <table><caption>Dasselbe direkte Kindelement auswählen</caption><thead><tr><th scope="col">Kindelement</th><th scope="col">CSS</th><th scope="col">JavaScript</th></tr></thead><tbody>
+          <tr><th scope="row">Erstes</th><td><code>:nth-child(1)</code></td><td><code>elternElement.children[0]</code></td></tr>
+          <tr><th scope="row">Zweites</th><td><code>:nth-child(2)</code></td><td><code>elternElement.children[1]</code></td></tr>
+          <tr><th scope="row">Drittes</th><td><code>:nth-child(3)</code></td><td><code>elternElement.children[2]</code></td></tr>
+        </tbody></table>
+        <p><code>*</code> steht für jeden Elementtyp. <code>*:nth-child(2)</code> und <code>:nth-child(2)</code> bedeuten dasselbe. <code>&gt;</code> führt jeweils zu einem direkten Kind; <code>:root</code> bezeichnet bei HTML das <code>&lt;html&gt;</code>-Element.</p>
+        <p><code>:nth-child()</code> und <code>children</code> zählen nur Elemente. Textknoten, auch Leerraum, und Kommentare zählen dabei nicht mit. <code>childNodes</code> enthält zusätzlich diese Knoten und beginnt beim Indexzugriff ebenfalls bei <code>[0]</code>. Die DOM-Sammlungen <code>children</code> und <code>childNodes</code> sind keine Arrays.</p>
+      </div>
+    </details>
   </form>
   <div class="workspace" id="workspace">
     <main class="canvas-area" id="treePane">

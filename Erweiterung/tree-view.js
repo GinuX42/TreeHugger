@@ -1,5 +1,5 @@
 import {byId, createElement, createSvgElement, setText, shortenText} from "./ui-dom.js";
-import {getAttribute, getNodeKind, getNodeLabel, getVisibleChildren, isWhitespaceNode} from "./node-presentation.js";
+import {getNodeKind, getNodeLabel, getTagPreview, getVisibleChildren, isWhitespaceNode} from "./node-presentation.js";
 import {describeElement} from "./semantics.js";
 import {CARD_HEIGHT, CARD_WIDTH, createTreeLayout} from "./tree-layout.js";
 import {renderElementGroupLegend, renderNodeLegend} from "./legend.js";
@@ -79,24 +79,27 @@ export function createTreeView({onSelect, onToggle, onMessage}) {
     const category = describeElement(node);
     const selected = node.id === state.selectedId;
     const visibleChildren = getVisibleChildren(node, state.nodes, state.filters);
+    const tagPreview = node.type === 1 ? getTagPreview(node) : null;
+    const label = tagPreview?.fullTag ?? getNodeLabel(node);
     const card = createSvgElement("g", {
       transform: `translate(${x} ${y})`, role: "group",
-      "aria-label": kind.name + ": " + getNodeLabel(node), "data-node-id": node.id
+      "aria-label": kind.name + ": " + label, "data-node-id": node.id
     });
     const selectButton = createSvgElement("g", {
       role: "button", tabindex: 0, "data-focus-key": node.id,
-      "aria-label": kind.name + ": " + getNodeLabel(node), "aria-pressed": String(selected)
+      "aria-label": kind.name + ": " + label, "aria-pressed": String(selected)
     });
     selectButton.append(
-      createSvgElement("title", {}, `${kind.name}: ${node.label || node.nodeName}${category ? " · " + category.name + ": " + category.meaning : ""}${node.value ? " · " + node.value.slice(0, 250) : ""}`),
+      createSvgElement("title", {}, `${kind.name}: ${label}${category ? " · " + category.name + ": " + category.meaning : ""}${node.value ? " · " + node.value.slice(0, 250) : ""}`),
       createSvgElement("rect", {width: CARD_WIDTH, height: CARD_HEIGHT, rx: 10, fill: selected ? kind.fill : "#fff", stroke: kind.color, "stroke-width": selected ? 3.5 : 1.8}),
       createSvgElement("rect", {width: CARD_WIDTH, height: 31, rx: 9, fill: kind.color}),
       createSvgElement("rect", {x: 0, y: 18, width: CARD_WIDTH, height: 13, fill: kind.color}),
       createText(14, 21, kind.name, {fill: "#fff", "font-weight": 700}),
-      createText(14, 55, shortenText(getNodeLabel(node), 19), {fill: "#173149", "font-size": 20, "font-family": "Consolas, monospace", "font-weight": 600}),
-      createSvgElement("rect", {x: 14, y: 65, width: 252, height: 27, rx: 5, fill: category?.color ?? kind.color}),
-      createText(23, 83, category ? shortenText(category.name + " · " + category.meaning, 34) : "Node · kein Element", {fill: "#fff", "font-weight": 600}),
-      createText(14, 113, getCardDetail(node, category, visibleChildren.length), {fill: "#3d5264"})
+      ...(tagPreview ? tagPreview.lines : [shortenText(label, 19)]).map((line, index) =>
+        createText(14, 51 + index * 16, line, {fill: "#173149", "font-size": tagPreview ? 13 : 20, "font-family": "Consolas, monospace", "font-weight": 600})),
+      createSvgElement("rect", {x: 14, y: 93, width: 252, height: 27, rx: 5, fill: category?.color ?? kind.color}),
+      createText(23, 111, category ? shortenText(category.name + " · " + category.meaning, 34) : "Node · kein Element", {fill: "#fff", "font-weight": 600}),
+      createText(14, 140, getCardDetail(node, visibleChildren.length, tagPreview), {fill: "#3d5264"})
     );
     selectButton.addEventListener("click", () => onSelect(node.id));
     selectButton.addEventListener("keydown", event => {
@@ -203,12 +206,15 @@ export function createTreeView({onSelect, onToggle, onMessage}) {
   return {render, reveal, applyZoom, exportSvg};
 }
 
-function getCardDetail(node, category, visibleChildCount) {
-  const id = getAttribute(node, "id");
-  const className = getAttribute(node, "class");
-  if (id) return shortenText("#" + id, 34);
-  if (className) return shortenText("." + className.trim().split(/\s+/).join("."), 34);
-  if (category) return category.name;
+function getCardDetail(node, visibleChildCount, tagPreview) {
+  if (tagPreview) {
+    const capturedCount = node.attributes?.length ?? 0;
+    const totalCount = node.attributesCount ?? capturedCount;
+    if (!totalCount) return "Keine Attribute";
+    if (totalCount > capturedCount) return `${capturedCount} von ${totalCount} Attributen · Details`;
+    const countLabel = totalCount === 1 ? "1 Attribut" : `${totalCount} Attribute`;
+    return `${countLabel}${tagPreview.truncated ? " · gekürzt" : ""} · Details öffnen`;
+  }
   if (visibleChildCount) return `${visibleChildCount} sichtbare direkte Kindknoten`;
   return isWhitespaceNode(node) ? "Leerzeichen / Zeilenumbrüche" : "";
 }

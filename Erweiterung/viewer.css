@@ -144,7 +144,8 @@ a {
 .controls {
   margin: 0;
   display: flex;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 8px 15px;
   align-items: end;
   padding: 12px 24px;
   background: #fff;
@@ -179,6 +180,48 @@ a {
   accent-color: #175e96;
   width: 17px;
   height: 17px;
+}
+
+.selector-help {
+  flex-basis: 100%;
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.selector-help summary {
+  cursor: pointer;
+  color: #155d9c;
+}
+
+.selector-help summary:focus-visible {
+  outline: 3px solid #e09528;
+  outline-offset: 3px;
+}
+
+.selector-help-content {
+  max-height: 32vh;
+  overflow: auto;
+  padding: 0 12px;
+  margin-top: 8px;
+  border-left: 4px solid #175e96;
+  background: #f3f6fa;
+}
+
+.selector-help table {
+  border-collapse: collapse;
+  width: min(100%, 720px);
+}
+
+.selector-help caption {
+  text-align: left;
+  font-weight: 600;
+}
+
+.selector-help th,
+.selector-help td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid #b9cad8;
 }
 
 .workspace {

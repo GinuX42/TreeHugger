@@ -1,9 +1,9 @@
 import {getVisibleChildren} from "./node-presentation.js";
 
 export const CARD_WIDTH = 280;
-export const CARD_HEIGHT = 126;
+export const CARD_HEIGHT = 152;
 const COLUMN_GAP = 342;
-const ROW_GAP = 158;
+const ROW_GAP = CARD_HEIGHT + 32;
 const MAX_VISIBLE_NODES = 600;
 
 export function createTreeLayout({rootId, nodes, expandedIds, filters}) {

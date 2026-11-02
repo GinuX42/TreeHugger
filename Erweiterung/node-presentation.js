@@ -34,6 +34,41 @@ export function getAttribute(node, name) {
   return node.attributes?.find(attribute => attribute.name === name)?.value;
 }
 
+export function getOpeningTag(node) {
+  const name = node.localName ?? node.nodeName;
+  const attributes = (node.attributes ?? []).map(attribute =>
+    ` ${attribute.name}="${escapeAttributeValue(attribute.value)}"`).join("");
+  return `<${name}${attributes}>`;
+}
+
+function escapeAttributeValue(value) {
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\r/g, "&#13;").replace(/\n/g, "&#10;").replace(/\t/g, "&#9;");
+}
+
+export function getTagPreview(node) {
+  const fullTag = getOpeningTag(node);
+  const lines = [];
+  const lineLength = 32;
+  let remaining = fullTag;
+  while (remaining && lines.length < 3) {
+    if (remaining.length <= lineLength) {
+      lines.push(remaining);
+      remaining = "";
+    } else if (lines.length === 2) {
+      lines.push(remaining.slice(0, lineLength - 1) + "…");
+      break;
+    } else {
+      const wordBreak = remaining.lastIndexOf(" ", lineLength);
+      const end = wordBreak > 0 ? wordBreak : lineLength;
+      lines.push(remaining.slice(0, end));
+      remaining = remaining.slice(end).trimStart();
+    }
+  }
+  return {fullTag, lines, truncated: Boolean(remaining)};
+}
+
 export function getVisibleChildren(node, nodes, filters) {
   return (node.childIds ?? []).map(id => nodes.get(id)).filter(child => {
     if (!child) return false;

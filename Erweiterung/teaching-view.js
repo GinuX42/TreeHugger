@@ -1,5 +1,6 @@
 import {byId, createElement, formatTime, setText} from "./ui-dom.js";
 import {EXAMPLE_TASKS, createChildrenTask, createSelectionTask} from "./teaching-model.js";
+import {createQuizView} from "./quiz-view.js";
 
 const METHOD_INPUT_HINTS = new Map([
   ["querySelector", "CSS-Selektor, zum Beispiel .hinweis oder #kurse."],
@@ -61,22 +62,14 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
   intro.append(createElement("h2", "Erst vorhersagen, dann aufdecken"),
     createElement("p", "Formulieren Sie Ihre Vermutung und begründen Sie sie. Erst „Ergebnis aufdecken“ zeigt die Antwort. Vergleichen Sie anschließend Ihre Überlegung mit der Erklärung."));
   if (isDemo) intro.append(createElement("p", "Vorschau mit Beispieldaten. Abfragen der aktuellen Webseite stehen beim Öffnen über das Erweiterungssymbol zur Verfügung.", "teaching-hint"));
-  const quizBar = createElement("div", undefined, "teaching-actions");
-  const quizToggle = control("button", "teachingQuiz", "Quizrunde starten");
-  quizToggle.type = "button";
-  const quizNext = control("button", "teachingNext", "Nächste Aufgabe");
-  quizNext.type = "button";
-  const quizProgress = control("p", "teachingProgress");
-  quizProgress.setAttribute("role", "status");
-  quizBar.append(quizToggle, quizNext, quizProgress);
   const samples = createElement("details", undefined, "teaching-samples");
   samples.append(createElement("summary", "Musterseiten für den Unterricht"),
     createElement("p", "Laden Sie eine Musterseite herunter und öffnen Sie die gespeicherte HTML-Datei in Chrome. Starten Sie dort TreeHugger über das Erweiterungssymbol. Für lokale Dateien muss in den Erweiterungsdetails „Zugriff auf Datei-URLs zulassen“ aktiviert sein. Wählen Sie im Baum den angegebenen Ausschnitt, damit die Darstellung übersichtlich bleibt."));
   const sampleList = createElement("ul");
   for (const [filename, title, description] of [
-    ["26_11_02_Musterseite_Selektoren.html", "Selektoren: Kursportal", "Ausschnitt #kurse · IDs, Klassen, direkte Kinder und Nachfahren vergleichen."],
-    ["26_11_02_Musterseite_Kindknoten.html", "Kindknoten: Text und Leerraum", "Ausschnitt #kurs · Elemente, Textknoten und Kommentare untersuchen."],
-    ["26_11_02_Musterseite_DOM_Aenderungen.html", "DOM-Veränderungen: Kursliste", "Ausschnitt #kurse · Absätze ergänzen und entfernen; gespeicherte Sammlungen vergleichen."]
+    ["26_11_03_Musterseite_Selektoren.html", "Selektoren: Kursportal", "Ausschnitt #kurse · IDs, Klassen, direkte Kinder und Nachfahren vergleichen."],
+    ["26_11_03_Musterseite_Kindknoten.html", "Kindknoten: Text und Leerraum", "Ausschnitt #kurs · Elemente, Textknoten und Kommentare untersuchen."],
+    ["26_11_03_Musterseite_DOM_Aenderungen.html", "DOM-Veränderungen: Kursliste", "Ausschnitt #kurse · Absätze ergänzen und entfernen; gespeicherte Sammlungen vergleichen."]
   ]) {
     const link = createElement("a", title + " herunterladen");
     link.href = filename;
@@ -111,25 +104,20 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
   answer.className = "teaching-answer";
   answer.setAttribute("aria-label", "Aufgedecktes Ergebnis");
   answer.setAttribute("aria-live", "polite");
-  pane.replaceChildren(intro, samples, quizBar, form, status, question, predictionField, actions, answer);
+  const lesson = createElement("section");
+  lesson.append(createElement("h3", "Einzelne Vorhersagen und eigene Aufgaben"), form, status, question, predictionField, actions, answer);
+  const quiz = createQuizView({onActiveChange(inQuiz) {
+    lesson.hidden = inQuiz;
+    if (inQuiz) clearTask();
+    else if (active) prepare();
+  }});
+  pane.replaceChildren(intro, samples, quiz.element, lesson);
 
   let active = false;
   let revision = 0;
   let pending = false;
   let currentTask = null;
   let revealed = false;
-  let quizIndex = null;
-
-  function updateQuiz() {
-    const inQuiz = quizIndex !== null;
-    form.hidden = inQuiz;
-    quizNext.hidden = !inQuiz;
-    quizNext.disabled = !revealed || pending || !active;
-    quizToggle.disabled = pending || !active;
-    setText(quizToggle, inQuiz ? "Quizrunde beenden" : "Quizrunde starten");
-    setText(quizNext, quizIndex === EXAMPLE_TASKS.length - 1 ? "Quizrunde abschließen" : "Nächste Aufgabe");
-    setText(quizProgress, inQuiz ? `Aufgabe ${quizIndex + 1} von ${EXAMPLE_TASKS.length} · offene Fragen zur Selbstkontrolle` : "");
-  }
 
   function updateControls() {
     prepareButton.disabled = pending || !active;
@@ -137,7 +125,6 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
     reveal.disabled = !currentTask || pending || !active;
     prediction.disabled = !currentTask || pending || !active;
     pane.setAttribute("aria-busy", String(pending));
-    updateQuiz();
   }
 
   function setBusy(value) {
@@ -191,14 +178,14 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
     if (!active || pending) return;
     clearTask();
     const requestRevision = revision;
-    const chosenSource = quizIndex !== null ? "example" : source.value;
+    const chosenSource = source.value;
     setBusy(true);
     setText(status, "Aufgabe wird vorbereitet …");
     try {
       let task;
       let capturedAt;
       if (chosenSource === "example") {
-        task = quizIndex !== null ? EXAMPLE_TASKS[quizIndex] : EXAMPLE_TASKS.find(item => item.id === example.value);
+        task = EXAMPLE_TASKS.find(item => item.id === example.value);
         if (!task) throw new Error("Wählen Sie ein vorhandenes Beispiel.");
       } else if (chosenSource === "children") {
         const current = getSnapshot();
@@ -232,7 +219,6 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
     if (!active || pending || !currentTask) return;
     if (revealed) {
       hideAnswer();
-      updateQuiz();
       setText(status, "Die Antwort ist wieder verborgen. Ihre Vorhersage bleibt erhalten.");
       return;
     }
@@ -243,7 +229,6 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
     for (const note of currentTask.notes ?? []) answer.append(createElement("p", note, "teaching-hint"));
     answer.hidden = false;
     revealed = true;
-    updateQuiz();
     reveal.setAttribute("aria-expanded", "true");
     setText(reveal, "Antwort wieder verbergen");
     setText(status, "Vergleichen Sie Ihre Vorhersage mit dem Ergebnis. Welche Stelle im HTML erklärt den Unterschied?");
@@ -254,24 +239,10 @@ export function createTeachingView({request, getSnapshot, onBusyChange, isDemo})
   query.addEventListener("input", configure);
   reveal.addEventListener("click", toggleAnswer);
   restart.addEventListener("click", prepare);
-  quizToggle.addEventListener("click", () => {
-    if (!active || pending) return;
-    quizIndex = quizIndex === null ? 0 : null;
-    return prepare();
-  });
-  quizNext.addEventListener("click", () => {
-    if (!active || pending || !revealed || quizIndex === null) return;
-    if (quizIndex < EXAMPLE_TASKS.length - 1) {
-      quizIndex++;
-      return prepare();
-    }
-    quizIndex = null;
-    clearTask("Quizrunde abgeschlossen. Vergleichen Sie Ihre Begründungen mit den besprochenen Musterantworten. Es wird keine automatische Note vergeben. Sie können eine neue Runde starten oder eine einzelne Aufgabe vorbereiten.");
-  });
   configure();
   return {
     activate() { if (active) return; active = true; return prepare(); },
-    deactivate() { active = false; quizIndex = null; clearTask(); },
-    refresh: prepare
+    deactivate() { active = false; quiz.deactivate(); clearTask(); },
+    refresh() { return quiz.active ? quiz.resetCurrent() : prepare(); }
   };
 }

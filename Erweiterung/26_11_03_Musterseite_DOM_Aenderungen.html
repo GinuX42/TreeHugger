@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TreeHugger · Kursliste und gespeicherte Sammlungen</title>
+  <style>
+    :root { color-scheme: light; font: 18px/1.6 system-ui, sans-serif; color: #173149; background: #eef3f7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 36px 24px; }
+    .page { max-width: 1120px; margin: auto; }
+    .eyebrow { margin: 0 0 12px; color: #006b58; font-size: .72rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 850px; margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.13; letter-spacing: -.04em; }
+    .lead { max-width: 800px; margin: 18px 0 26px; color: #465c70; }
+    .route { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 28px; padding: 13px 18px; border-left: 5px solid #005bbd; background: #fff; border-radius: 0 10px 10px 0; font-size: .88rem; }
+    .route strong { color: #004c9e; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr); gap: 24px; align-items: start; }
+    .surface { min-width: 0; padding: 24px; border: 1px solid #cad7e2; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px #17314908; }
+    .section-label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: baseline; margin: 0 0 18px; font-size: .82rem; color: #465c70; }
+    .section-label strong { font-size: 1rem; color: #173149; }
+    code { font: .9em/1.5 Consolas, monospace; overflow-wrap: anywhere; }
+    p code, li code, .route code, .section-label code { padding: 2px 5px; border-radius: 4px; color: #004c9e; background: #eaf2fb; }
+    #kurse { min-height: 125px; padding: 18px; border: 3px solid #005bbd; border-radius: 12px; background: #f5f9ff; }
+    .hinweis { margin: 10px 0; padding: 12px 14px; border-left: 5px solid #b40050; border-radius: 0 6px 6px 0; color: #78103f; background: #fff0f6; font-weight: 600; }
+    .aktionen { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    button { padding: 10px 14px; border: 1px solid #9cb4cc; border-radius: 8px; color: #173149; background: #fff; font: 650 .84rem/1.4 system-ui, sans-serif; cursor: pointer; }
+    button:hover:not(:disabled) { background: #eaf2fb; border-color: #005bbd; }
+    #ergaenzen { border-color: #005bbd; color: white; background: #005bbd; }
+    #ergaenzen:hover:not(:disabled) { background: #004a9a; }
+    button:disabled { opacity: .48; cursor: default; }
+    button:focus-visible, summary:focus-visible { outline: 3px solid #ad6500; outline-offset: 4px; }
+    h2 { margin: 0 0 12px; font-size: 1.2rem; line-height: 1.3; }
+    .caption { margin: 14px 0 0; color: #52677b; font-size: .82rem; }
+    .prompts { margin: 18px 0; padding-left: 23px; }
+    .prompts li { margin-bottom: 14px; padding-left: 4px; }
+    .prompts li::marker { color: #006b58; font-weight: 800; }
+    .prompts p { margin: 5px 0 0; color: #465c70; font-size: .88rem; }
+    #vergleich { margin-top: 24px; padding-top: 20px; border-top: 1px solid #d8e1e9; }
+    #aufdecken { width: 100%; border-color: #702082; color: #702082; background: #f7f0fa; }
+    output { display: block; margin-top: 16px; padding: 14px; border-left: 4px solid #702082; border-radius: 0 8px 8px 0; color: #702082; background: #f7f0fa; font-size: .9rem; font-weight: 650; white-space: pre-wrap; overflow-wrap: anywhere; }
+    output:empty { margin: 0; padding: 0; border: 0; }
+    details { margin-top: 24px; }
+    summary { cursor: pointer; font-weight: 700; color: #004c9e; }
+    pre { margin: 16px 0 0; padding: 18px; overflow: auto; border: 1px solid #cad7e2; border-radius: 10px; color: #173149; background: #f3f7fc; font: .85rem/1.65 Consolas, monospace; }
+    .note { margin: 20px 0 0; padding: 13px 16px; border-left: 4px solid #087b58; color: #175b43; background: #eefaf4; border-radius: 0 8px 8px 0; font-size: .88rem; }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: 26px; color: #52677b; font-size: .75rem; }
+    footer p { margin: 0; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { body { padding: 24px 14px; } .surface { padding: 18px; } .aktionen button { flex: 1 1 100%; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header id="einfuehrung">
+      <p class="eyebrow">TreeHugger · Musterseite 03 · DOM-Veränderungen</p>
+      <h1>Die Seite ändert sich.<br>Was bleibt in der Sammlung?</h1>
+      <p class="lead">Beim Öffnen werden zwei Sammlungen gespeichert. Verändern Sie anschließend die Kursliste und sagen Sie voraus, welche Einträge die gespeicherten Sammlungen danach enthalten.</p>
+      <p class="route"><strong>In TreeHugger:</strong> Ausschnitt <code>#kurse</code> <span aria-hidden="true">→</span> nach Änderungen „Seite neu einlesen“</p>
+    </header>
+    <div class="layout">
+      <section class="surface" aria-label="Veränderbare Kursliste">
+        <p class="section-label"><strong>Kursliste</strong><span>Untersuchungsbereich <code>main#kurse</code></span></p>
+        <main id="kurse">
+          <p id="kurs-1" class="hinweis">Kurs 1: HTML-Grundlagen</p>
+        </main>
+        <div id="steuerung" class="aktionen">
+          <button id="ergaenzen" type="button">Absatz ergänzen</button>
+          <button id="entfernen" type="button">Letzten Absatz entfernen</button>
+          <button id="neustart" type="button">Seite zurücksetzen</button>
+        </div>
+        <p class="caption">Bis zu zehn Absätze halten das Beispiel übersichtlich. „Seite zurücksetzen“ lädt diese Seite neu und speichert auch die beiden Sammlungen neu.</p>
+      </section>
+      <aside class="surface" aria-labelledby="erkunden">
+        <h2 id="erkunden">Verändern und vergleichen</h2>
+        <ol class="prompts">
+          <li><strong>Einen Absatz ergänzen</strong><p>Erwarten Sie in beiden gespeicherten Sammlungen einen neuen Eintrag? Begründen Sie Ihre Vorhersage.</p></li>
+          <li><strong>Alle Absätze entfernen</strong><p>Kann eine gespeicherte Sammlung noch auf ein Element verweisen, das nicht mehr in der Seite steht?</p></li>
+          <li><strong>Erneut abfragen</strong><p>Vergleichen Sie die gespeicherten Sammlungen mit einer neuen Abfrage in TreeHugger. Zu welchem Zeitpunkt wurde jeweils ausgewählt?</p></li>
+        </ol>
+        <section id="vergleich" aria-label="Gespeicherte Sammlungen vergleichen">
+          <button id="aufdecken" type="button">Gespeicherte Sammlungen anzeigen</button>
+          <p class="caption">Erst nach Ihrer Vorhersage aufdecken. Jede weitere Änderung verbirgt die vorherige Ausgabe wieder.</p>
+          <output id="ergebnis" aria-live="polite"></output>
+        </section>
+      </aside>
+    </div>
+    <details class="surface">
+      <summary>Wie die beiden Sammlungen gespeichert werden</summary>
+      <pre><code>const lebend = document.getElementsByClassName("hinweis");
+const statisch = document.querySelectorAll(".hinweis");</code></pre>
+      <p class="caption">Diese beiden Aufrufe laufen einmal beim Öffnen. Beim Aufdecken werden nur die aktuellen <code>length</code>-Eigenschaften der bereits gespeicherten Sammlungen gelesen.</p>
+      <pre><code>lebend.length
+statisch.length</code></pre>
+      <p class="note">TreeHugger zeigt eine Momentaufnahme. „Seite neu einlesen“ aktualisiert den Baum; eine neue Auswahlabfrage erfasst die jetzige Struktur. Die Variablen auf dieser Musterseite behalten dagegen ihre ursprünglich gespeicherten Sammlungen.</p>
+    </details>
+    <footer><p>TreeHugger · Idee und fachliche Projektleitung: Gino Peduto</p><p>Eigenständige Musterseite · funktioniert ohne Internet</p></footer>
+  </div>
+  <script>
+    const kursliste = document.querySelector("#kurse");
+    const lebend = document.getElementsByClassName("hinweis");
+    const statisch = document.querySelectorAll(".hinweis");
+    const ergebnis = document.querySelector("#ergebnis");
+    const ergaenzen = document.querySelector("#ergaenzen");
+    const entfernen = document.querySelector("#entfernen");
+    let naechsteNummer = 2;
+
+    function aktualisiereBedienung() {
+      ergebnis.textContent = "";
+      ergaenzen.disabled = kursliste.children.length >= 10;
+      entfernen.disabled = kursliste.children.length === 0;
+    }
+
+    ergaenzen.addEventListener("click", () => {
+      if (kursliste.children.length >= 10) return;
+      const absatz = document.createElement("p");
+      absatz.id = "kurs-" + naechsteNummer;
+      absatz.className = "hinweis";
+      absatz.textContent = "Kurs " + naechsteNummer + ": Neuer Kurs";
+      naechsteNummer++;
+      kursliste.append(absatz);
+      aktualisiereBedienung();
+    });
+
+    entfernen.addEventListener("click", () => {
+      kursliste.lastElementChild?.remove();
+      aktualisiereBedienung();
+    });
+
+    document.querySelector("#aufdecken").addEventListener("click", () => {
+      ergebnis.textContent = "Gespeicherte HTMLCollection: length = " + lebend.length
+        + "\nGespeicherte NodeList: length = " + statisch.length;
+    });
+
+    document.querySelector("#neustart").addEventListener("click", () => location.reload());
+    aktualisiereBedienung();
+  </script>
+</body>
+</html>

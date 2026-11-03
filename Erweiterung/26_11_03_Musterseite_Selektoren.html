@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TreeHugger · Kursportal und Selektoren</title>
+  <style>
+    :root { color-scheme: light; font: 18px/1.6 system-ui, sans-serif; color: #173149; background: #eef3f7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 36px 24px; }
+    .page { max-width: 1120px; margin: auto; }
+    .eyebrow { margin: 0 0 12px; color: #006b58; font-size: .72rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 800px; margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.13; letter-spacing: -.04em; }
+    .lead { max-width: 770px; margin: 18px 0 26px; color: #465c70; }
+    .route { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 28px; padding: 13px 18px; border-left: 5px solid #005bbd; background: #fff; border-radius: 0 10px 10px 0; font-size: .88rem; }
+    .route strong { color: #004c9e; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); gap: 24px; align-items: start; }
+    .surface { min-width: 0; padding: 24px; border: 1px solid #cad7e2; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px #17314908; }
+    .section-label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: baseline; margin: 0 0 18px; font-size: .82rem; color: #465c70; }
+    .section-label strong { font-size: 1rem; color: #173149; }
+    code { font: .9em/1.5 Consolas, monospace; overflow-wrap: anywhere; }
+    p code, li code, .route code, .section-label code { padding: 2px 5px; border-radius: 4px; color: #004c9e; background: #eaf2fb; }
+    #kurse { padding: 20px; border: 3px solid #005bbd; border-radius: 12px; background: #f5f9ff; }
+    .karte { padding: 20px; border: 1px solid #9dbde0; border-radius: 9px; background: #fff; }
+    #kurstitel { margin: 0 0 16px; font-size: 1.25rem; line-height: 1.3; }
+    .hinweis { margin: 12px 0; padding: 12px 14px; border-left: 5px solid #b40050; border-radius: 0 6px 6px 0; color: #78103f; background: #fff0f6; font-weight: 600; }
+    .details { margin: 18px 0 0 22px; padding: 6px 12px; border: 1px dashed #087b58; border-radius: 8px; background: #eefaf4; }
+    .details .hinweis { padding: 6px 9px; color: #005d40; background: transparent; border-color: #087b58; }
+    #kontakt { margin: 20px 0 0; color: #004c9e; background: #e2efff; border-color: #005bbd; }
+    .caption { margin: 16px 0 0; font-size: .82rem; color: #52677b; }
+    h2 { margin: 0 0 12px; font-size: 1.2rem; line-height: 1.3; }
+    .prompts { margin: 0; padding-left: 23px; }
+    .prompts li { margin: 0 0 18px; padding-left: 4px; }
+    .prompts li:last-child { margin-bottom: 0; }
+    .prompts li::marker { color: #006b58; font-weight: 800; }
+    .prompts p { margin: 5px 0 0; font-size: .88rem; color: #465c70; }
+    details { margin-top: 24px; }
+    summary { cursor: pointer; font-weight: 700; color: #004c9e; }
+    summary:focus-visible { outline: 3px solid #ad6500; outline-offset: 4px; }
+    pre { margin: 16px 0 0; padding: 18px; overflow: auto; border: 1px solid #cad7e2; border-radius: 10px; background: #f3f7fc; font: .85rem/1.65 Consolas, monospace; tab-size: 2; }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: 26px; color: #52677b; font-size: .75rem; }
+    footer p { margin: 0; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { body { padding: 24px 14px; } .surface { padding: 18px; } #kurse, .karte { padding: 14px; } .details { margin-left: 12px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header id="einfuehrung">
+      <p class="eyebrow">TreeHugger · Musterseite 01 · Selektoren</p>
+      <h1>Eine Kurskarte.<br>Mehrere Wege zur Auswahl.</h1>
+      <p class="lead">Untersuchen Sie, wie Verschachtelung und Selektoren zusammenwirken. A, B und C kennzeichnen die Absätze, damit Sie Ihre Vorhersage präzise formulieren können.</p>
+      <p class="route"><strong>In TreeHugger:</strong> DOM-Baum öffnen <span aria-hidden="true">→</span> Ausschnitt <code>#kurse</code> anzeigen</p>
+    </header>
+    <div class="layout">
+      <section class="surface" aria-label="Muster-Kursportal">
+        <p class="section-label"><strong>Kursportal</strong><span>Untersuchungsbereich <code>main#kurse</code></span></p>
+        <main id="kurse">
+          <section id="webkurs" class="karte aktiv">
+            <h2 id="kurstitel">Webentwicklung</h2>
+            <p id="frei" class="hinweis">A: Plätze frei</p>
+            <div class="details">
+              <p id="voraussetzung" class="hinweis">B: Grundkenntnisse in HTML</p>
+            </div>
+          </section>
+          <p id="kontakt" class="hinweis">C: Kontakt zum Kursbüro</p>
+        </main>
+        <p class="caption">Der blaue Rahmen umfasst das untersuchte <code>main</code>-Element. Die Einrückung macht die Verschachtelung sichtbar. Entscheidend für die Auswahl bleibt die HTML-Struktur.</p>
+      </section>
+      <aside class="surface" aria-labelledby="erkunden">
+        <h2 id="erkunden">Erst vorhersagen, dann prüfen</h2>
+        <ol class="prompts">
+          <li><strong>Welche Absätze treffen Sie?</strong><p>Vergleichen Sie <code>#kurse &gt; .hinweis</code> und <code>#kurse .hinweis</code>. Begründen Sie jeden Treffer anhand seines Elternteils.</p></li>
+          <li><strong>Eine Klasse oder zwei?</strong><p>Vergleichen Sie <code>.karte.aktiv</code> mit <code>.karte .aktiv</code>. Auf welche Elemente beziehen sich die Bedingungen jeweils?</p></li>
+          <li><strong>Ein Treffer oder eine Sammlung?</strong><p>Verwenden Sie <code>querySelector</code> und <code>querySelectorAll</code> mit <code>.hinweis</code>. Sagen Sie Typ und Inhalt der Rückgabe voraus.</p></li>
+        </ol>
+      </aside>
+    </div>
+    <details class="surface">
+      <summary>HTML des Untersuchungsbereichs ansehen</summary>
+      <pre><code>&lt;main id="kurse"&gt;
+  &lt;section id="webkurs" class="karte aktiv"&gt;
+    &lt;h2 id="kurstitel"&gt;Webentwicklung&lt;/h2&gt;
+    &lt;p id="frei" class="hinweis"&gt;A: Plätze frei&lt;/p&gt;
+    &lt;div class="details"&gt;
+      &lt;p id="voraussetzung" class="hinweis"&gt;B: Grundkenntnisse in HTML&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;p id="kontakt" class="hinweis"&gt;C: Kontakt zum Kursbüro&lt;/p&gt;
+&lt;/main&gt;</code></pre>
+      <p class="caption">Für den Vergleich: <code>&gt;</code> verlangt ein direktes Kind des Containers; ein Leerzeichen erlaubt passende Nachfahren auf mehreren Ebenen.</p>
+    </details>
+    <footer><p>TreeHugger · Idee und fachliche Projektleitung: Gino Peduto</p><p>Eigenständige Musterseite · funktioniert ohne Internet</p></footer>
+  </div>
+</body>
+</html>

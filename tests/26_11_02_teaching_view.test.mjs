@@ -201,92 +201,76 @@ test("page content and errors stay text, while unavailable or oversized queries 
   }, {isDemo: true});
 });
 
-test("a quiz starts with a hidden first answer and Next follows the reveal state", async () => {
-  await fixture(async ({view, get, pane, created}) => {
+test("starting the new quiz hides and clears the individual task, while refresh resets only the quiz question", async () => {
+  await fixture(async ({view, get, created}) => {
     await view.activate();
-    get("teachingPrediction").value = "Entwurf vor der Quizrunde";
+    get("teachingPrediction").value = "Vorherige Notiz";
     await get("teachingReveal").dispatch("click");
+    get("quizFormat").value = "open";
+    get("quizLength").value = "10";
+    get("quizOrder").value = "ordered";
     await get("teachingQuiz").dispatch("click");
-    assert.equal(created.find(element => element.tagName === "form").hidden, true);
-    assert.match(get("teachingProgress").textContent, /Aufgabe 1 von 6/);
+    const form = created.find(element => element.tagName === "form");
+    const lesson = created.find(element => element.children.includes(form));
+    assert.equal(lesson.hidden, true);
     assert.equal(get("teachingPrediction").value, "");
-    assert.equal(get("teachingAnswer").children.length, 0);
-    assert.equal(pane.textContent.includes(EXAMPLE_TASKS[0].answer.explanation), false);
-    assert.equal(get("teachingNext").hidden, false);
+    assert.equal(get("teachingAnswer").textContent, "");
+    assert.match(get("teachingProgress").textContent, /Aufgabe 1 von 10/);
+    assert.equal(get("quizAnswer").textContent, "");
+    get("quizPrediction").value = "Vorhersage im Quiz";
+    await get("quizCheck").dispatch("click");
+    assert.ok(get("quizAnswer").textContent.length > 0);
+    await view.refresh();
+    assert.equal(get("quizPrediction").value, "");
+    assert.equal(get("quizAnswer").textContent, "");
     assert.equal(get("teachingNext").disabled, true);
-    const firstQuestion = get("teachingQuestion").textContent;
-    await get("teachingNext").dispatch("click");
-    assert.equal(get("teachingQuestion").textContent, firstQuestion);
-    get("teachingPrediction").value = "Meine Vermutung";
-    await get("teachingReveal").dispatch("click");
-    assert.equal(get("teachingNext").disabled, false);
-    await get("teachingReveal").dispatch("click");
-    assert.equal(get("teachingNext").disabled, true);
-    assert.equal(get("teachingPrediction").value, "Meine Vermutung");
-    assert.equal(get("teachingAnswer").children.length, 0);
+    assert.match(get("teachingProgress").textContent, /Aufgabe 1 von 10/);
+    assert.equal(lesson.hidden, true);
+    await get("quizExit").dispatch("click");
+    assert.equal(lesson.hidden, false);
+    assert.equal(get("teachingProgress").textContent, "");
+    assert.ok(get("teachingQuestion").textContent.includes(EXAMPLE_TASKS[0].question));
+    assert.equal(get("teachingAnswer").textContent, "");
   });
 });
 
-test("all six quiz tasks clear the previous prediction and answer, then finish without a grade", async () => {
-  assert.equal(EXAMPLE_TASKS.length, 6);
-  await fixture(async ({view, get, created}) => {
+test("starting a quiz invalidates a pending page task so late results cannot restore its answer", async () => {
+  const pending = deferred();
+  await fixture(async ({view, get, prepare, pane, created}) => {
     await view.activate();
+    await selectSource(get, "selection");
+    const running = prepare();
     await get("teachingQuiz").dispatch("click");
-    for (const [index, task] of EXAMPLE_TASKS.entries()) {
-      assert.ok(get("teachingQuestion").textContent.includes(task.question), task.id);
-      assert.ok(get("teachingQuestion").textContent.includes(task.code), task.id);
-      assert.match(get("teachingProgress").textContent, new RegExp(`Aufgabe ${index + 1} von 6`));
-      assert.equal(get("teachingPrediction").value, "", task.id);
-      assert.equal(get("teachingAnswer").textContent, "", task.id);
-      assert.equal(get("teachingNext").disabled, true, task.id);
-      get("teachingPrediction").value = `Meine Überlegung zu ${task.id}`;
-      await get("teachingReveal").dispatch("click");
-      assert.ok(get("teachingAnswer").textContent.includes(task.answer.explanation), task.id);
-      assert.equal(get("teachingNext").disabled, false, task.id);
-      assert.equal(get("teachingNext").textContent, index === 5 ? "Quizrunde abschließen" : "Nächste Aufgabe");
-      await get("teachingNext").dispatch("click");
-    }
+    const quizQuestion = get("quizQuestion").textContent;
+    pending.resolve(result("VERALTETE AUSWAHL"));
+    await running;
+    assert.equal(get("quizQuestion").textContent, quizQuestion);
     assert.equal(get("teachingQuestion").textContent, "");
-    assert.equal(get("teachingPrediction").value, "");
     assert.equal(get("teachingAnswer").textContent, "");
-    assert.equal(get("teachingNext").hidden, true);
-    assert.equal(get("teachingProgress").textContent, "");
-    assert.equal(get("teachingReveal").disabled, true);
-    assert.equal(get("teachingQuiz").textContent, "Quizrunde starten");
-    assert.equal(created.find(element => element.tagName === "form").hidden, false);
-    assert.match(get("teachingStatus").textContent, /Quizrunde abgeschlossen/);
-    assert.match(get("teachingStatus").textContent, /keine automatische Note/);
-    await get("teachingQuiz").dispatch("click");
-    assert.match(get("teachingProgress").textContent, /Aufgabe 1 von 6/);
-    assert.equal(get("teachingAnswer").textContent, "");
-  });
+    assert.equal(pane.textContent.includes("VERALTETE AUSWAHL"), false);
+    const form = created.find(element => element.tagName === "form");
+    assert.equal(created.find(element => element.children.includes(form)).hidden, true);
+  }, {request: () => pending.promise});
 });
 
-test("ending a quiz or changing the view removes quiz progress and revealed answers", async () => {
+test("leaving the teaching tab clears the quiz and returning opens an individual task with its answer hidden", async () => {
   await fixture(async ({view, get, created}) => {
     await view.activate();
     await get("teachingQuiz").dispatch("click");
-    await get("teachingReveal").dispatch("click");
-    await get("teachingNext").dispatch("click");
-    get("teachingPrediction").value = "Zweiter Entwurf";
-    await get("teachingReveal").dispatch("click");
-    await get("teachingQuiz").dispatch("click");
-    assert.equal(get("teachingProgress").textContent, "");
-    assert.equal(get("teachingNext").hidden, true);
-    assert.equal(get("teachingAnswer").textContent, "");
-    assert.equal(get("teachingPrediction").value, "");
-    assert.equal(created.find(element => element.tagName === "form").hidden, false);
-    await get("teachingQuiz").dispatch("click");
-    await get("teachingReveal").dispatch("click");
+    get("quizPrediction").value = "Quiznotiz";
+    await get("quizCheck").dispatch("click");
     view.deactivate();
+    assert.equal(get("quizQuestion").textContent, "");
+    assert.equal(get("quizPrediction").value, "");
+    assert.equal(get("quizAnswer").textContent, "");
+    assert.equal(get("quizSummary").textContent, "");
     assert.equal(get("teachingProgress").textContent, "");
-    assert.equal(get("teachingNext").hidden, true);
-    assert.equal(get("teachingQuiz").disabled, true);
-    assert.equal(get("teachingAnswer").textContent, "");
     await view.activate();
-    assert.equal(get("teachingProgress").textContent, "");
-    assert.equal(get("teachingNext").hidden, true);
-    assert.equal(get("teachingQuiz").textContent, "Quizrunde starten");
+    const form = created.find(element => element.tagName === "form");
+    assert.equal(created.find(element => element.children.includes(form)).hidden, false);
+    assert.equal(get("teachingQuiz").hidden, false);
+    assert.equal(get("quizExit").hidden, true);
+    assert.ok(get("teachingQuestion").textContent.includes(EXAMPLE_TASKS[0].question));
     assert.equal(get("teachingAnswer").textContent, "");
   });
 });
@@ -295,9 +279,9 @@ test("sample downloads use only the three fixed local HTML filenames", async () 
   await fixture(({created}) => {
     const links = created.filter(element => element.tagName === "a");
     const filenames = [
-      "26_11_02_Musterseite_Selektoren.html",
-      "26_11_02_Musterseite_Kindknoten.html",
-      "26_11_02_Musterseite_DOM_Aenderungen.html"
+      "26_11_03_Musterseite_Selektoren.html",
+      "26_11_03_Musterseite_Kindknoten.html",
+      "26_11_03_Musterseite_DOM_Aenderungen.html"
     ];
     assert.deepEqual(links.map(link => link.href), filenames);
     assert.deepEqual(links.map(link => link.download), filenames);

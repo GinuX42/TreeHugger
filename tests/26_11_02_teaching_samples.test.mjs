@@ -4,7 +4,7 @@ import {test} from "node:test";
 import {runInNewContext} from "node:vm";
 import {EXAMPLE_TASKS} from "../Erweiterung/teaching-model.js";
 
-const readSample = name => readFile(new URL(`../Erweiterung/26_11_02_Musterseite_${name}.html`, import.meta.url), "utf8");
+const readSample = name => readFile(new URL(`../Erweiterung/26_11_03_Musterseite_${name}.html`, import.meta.url), "utf8");
 
 test("downloadable sample pages are self-contained and preserve the exact whitespace example", async () => {
   for (const name of ["Selektoren", "Kindknoten", "DOM_Aenderungen"]) {
@@ -12,7 +12,7 @@ test("downloadable sample pages are self-contained and preserve the exact whites
     assert.match(html, /<html lang="de">/);
     assert.match(html, /<meta charset="utf-8">/);
     assert.doesNotMatch(html, /<(?:script|link|iframe|img)\b[^>]*(?:src|href)\s*=/i);
-    const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+    const ids = [...html.matchAll(/<[a-z][^>]*\bid="([^"]+)"[^>]*>/g)].map(match => match[1]);
     assert.equal(new Set(ids).size, ids.length);
   }
   const childPage = await readSample("Kindknoten");

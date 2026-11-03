@@ -1,10 +1,10 @@
 # TreeHugger
 
-**Aktueller Code: 1.4.0 (02.11.2026).** Der neue Reiter **Unterricht** enthält offene Vorhersageaufgaben, eine Quizrunde mit sechs Fragen und drei übersichtliche Musterseiten. Für diesen Stand oben **Code → Download ZIP** wählen, das Repository entpacken und dessen Ordner `Erweiterung` verwenden. Das separat veröffentlichte Installationspaket bleibt bei Version 1.3.3 und enthält den Unterrichtsmodus noch nicht.
+**Version 1.4.1 (03.11.2026).** Das Installationspaket enthält den Unterrichtsmodus mit **54 Quizfragen**, den drei Leveln **Erstie, Bachelor und Master**, offenen Antworten oder **Multiple Choice** sowie drei überarbeiteten Musterseiten.
 
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
-**Version 1.3.3** · [Installationspaket herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.3.3/26_11_01_TreeHugger_1_3_3.zip) · [Versionsseite](https://github.com/GinuX42/TreeHugger/releases/tag/v1.3.3) · [Bebilderte Anleitung](26_11_01_Installation.html)
+[Installationspaket 1.4.1 herunterladen](https://github.com/GinuX42/TreeHugger/raw/refs/heads/main/26_11_03_TreeHugger_1_4_1.zip) · [Bebilderte Anleitung](26_11_03_Installation.html) · [SHA-256-Prüfsumme](26_11_03_TreeHugger_1_4_1_SHA256.txt)
 
 Die HTML-Anleitung enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
 
@@ -31,11 +31,21 @@ Wer das Repository herunterlädt oder klont, kann ebenfalls dessen Unterordner *
 
 ## Unterricht und Quizrunde
 
-Öffnen Sie **Unterricht → Quizrunde starten**. Die sechs offenen Fragen behandeln `querySelector`, `querySelectorAll`, fehlende Treffer, `children` und `childNodes`, CSS-Positionen gegenüber JavaScript-Indizes sowie lebende und statische Sammlungen. Antworten Sie mündlich oder tragen Sie Ihre Begründung in das freiwillige Textfeld ein. **Ergebnis aufdecken** zeigt die Musterantwort und ihre Erklärung; danach führt **Nächste Aufgabe** weiter. Es gibt keine automatische Bewertung oder Note.
+Wählen Sie im Reiter **Unterricht** die Antwortform, ein Level, ein Thema, den Umfang und die Reihenfolge der Fragen. Anschließend starten Sie die **Quizrunde**. Der Katalog enthält 54 Aufgaben zu Selektoren, Rückgabetypen, Kindknoten, CSS-Spezifität und Kaskade sowie DOM-Veränderungen und Ereignissen. Enthält die gewählte Kombination weniger Fragen als der gewünschte Umfang, werden alle verfügbaren Fragen dieser Kombination verwendet.
+
+- **Erstie:** Code nachvollziehen und grundlegende Beziehungen anwenden.
+- **Bachelor:** mehrere Regeln kombinieren und Ergebnisse begründen.
+- **Master:** Wechselwirkungen und Sonderfälle analysieren.
+
+Diese Namen bezeichnen Lernstufen im Tool, keine Gleichsetzung mit akademischen Abschlüssen. **Alle Level** ermöglicht eine gemischte Runde; die Stufe steht jeweils bei der Frage.
+
+Bei **offenen Vorhersagen** antworten Sie mündlich oder im freiwilligen Textfeld. **Ergebnis aufdecken** zeigt die Musterantwort und ihre Erklärung. Bei **Multiple Choice** stehen genau vier Antworten zur Auswahl, davon ist genau eine richtig. **Antwort prüfen** erklärt die gewählte Antwort. Unter **Alle vier Antworten vergleichen** werden anschließend alle Optionen begründet. Die Antwortpositionen werden bei jeder Runde gemischt, auch wenn die Fragen nach Themen geordnet sind.
+
+**Nächste Aufgabe** führt weiter. Am Ende einer Multiple-Choice-Runde sehen Sie die Anzahl richtiger erster Antworten und die Themen zum Vertiefen. Wiederholen Sie eine Frage innerhalb derselben Runde, bleibt ihre erste abgegebene Auswahl für diese Auswertung maßgeblich. Es wird keine Note vergeben. Offene Antworten werden nicht automatisch bewertet.
 
 Außerhalb der Quizrunde lassen sich Beispiele einzeln wählen. Für eigene Aufgaben wählen Sie im DOM-Baum ein Element und dann **Kindknoten des gewählten Elements**, oder verwenden Sie **Auswahl auf der aktuellen Webseite** mit einer Auswahlmethode und einem Suchwert. **Aufgabe vorbereiten** hält das Ergebnis als Momentaufnahme fest, zeigt es aber erst nach dem Aufdecken. Eine neue Aufgabe oder ein Ansichtswechsel löscht die freiwillige Notiz. Eingaben werden nicht gespeichert oder übertragen.
 
-Unter **Musterseiten für den Unterricht** stehen drei eigenständige HTML-Dateien zum Herunterladen bereit:
+Unter **Musterseiten für den Unterricht** stehen drei neu gestaltete, eigenständige HTML-Dateien zum Herunterladen bereit. Sie enthalten einen klar abgegrenzten Untersuchungsbereich, Erkundungsimpulse und aufklappbare Codeansichten:
 
 - **Selektoren: Kursportal** – wenige Elemente mit IDs, Klassen, direkten Kindern und tieferen Nachfahren; Baum-Ausschnitt `#kurse`.
 - **Kindknoten: Text und Leerraum** – ein Absatz, ein Kommentar und die Leerraum-Textknoten dazwischen; Ausschnitt `#kurs`.
@@ -75,9 +85,9 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die 128 automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabeninhalte, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.4.0 wurde im bisherigen Arbeitsumfeld wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft.
+Alternativ genügt `node --test` im Projektordner. Die automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabenstruktur, Level- und Themenfilter, Antwortzuordnung, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.4.1 konnte wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft werden.
 
-Weitere Einzelheiten stehen in den [Prüfhinweisen](26_11_01_Pruefhinweise.md).
+Weitere Einzelheiten und das tatsächliche Testergebnis stehen in den [Prüfhinweisen](26_11_03_Pruefhinweise.md).
 
 ## Projektangaben und Fremdkomponenten
 
@@ -85,4 +95,4 @@ Weitere Einzelheiten stehen in den [Prüfhinweisen](26_11_01_Pruefhinweise.md).
 
 Technische Umsetzung mit KI-Unterstützung durch OpenAI Codex.
 
-Die [Projektangaben](26_11_01_Projektangaben.md) beschreiben die Beiträge. Die lokale Formatierungsbibliothek **js-beautify** wird einschließlich ihrer [MIT-Lizenz](Erweiterung/vendor/js-beautify/LICENSE) und ihres [Herkunftsnachweises](Erweiterung/vendor/js-beautify/provenance.json) mitgeliefert. Diese Bibliothekslizenz ist keine pauschale Lizenzangabe für das gesamte Projekt.
+Die [Projektangaben](26_11_03_Projektangaben.md) beschreiben die Beiträge. Die lokale Formatierungsbibliothek **js-beautify** wird einschließlich ihrer [MIT-Lizenz](Erweiterung/vendor/js-beautify/LICENSE) und ihres [Herkunftsnachweises](Erweiterung/vendor/js-beautify/provenance.json) mitgeliefert. Diese Bibliothekslizenz ist keine pauschale Lizenzangabe für das gesamte Projekt.

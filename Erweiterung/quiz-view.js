@@ -151,9 +151,11 @@ export function createQuizView({onActiveChange, random = Math.random}) {
     const task = round[index];
     checked = true;
     revealed = true;
-    const lines = createElement("ul");
+    const lines = createElement("ol", undefined, "quiz-answer-steps");
     for (const line of task.answer.lines) lines.append(createElement("li", line));
-    answer.replaceChildren(createElement("h3", task.answer.heading), lines, createElement("p", task.answer.explanation));
+    const takeaway = createElement("p");
+    takeaway.append(createElement("strong", "Merksatz: "), createElement("span", task.answer.explanation));
+    answer.replaceChildren(createElement("h3", task.answer.heading), createElement("h4", "Schritt für Schritt"), lines, takeaway);
     if (choiceMode) {
       const correct = selected === task.correctIndex;
       if (!results.has(task.id)) results.set(task.id, correct);

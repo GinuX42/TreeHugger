@@ -1,11 +1,12 @@
-const CSS_CONTEXT = "Es gelten nur die gezeigten Autorenstile, ohne zusätzliche Regeln, Animationen, Übergänge oder @scope. Nicht ausdrücklich geschichtete Regeln stehen außerhalb von @layer. Vergleichen Sie jeweils dieselbe CSS-Eigenschaft am genannten Ziel.";
+const SPECIFICITY_CONTEXT = "Spezifität wird als (A, B, C) notiert: A zählt ID-Selektoren; B zählt Klassen, Attributselektoren und Pseudoklassen; C zählt Elementnamen und Pseudoelemente. Funktionen wie :not() und :where() haben Sonderregeln für ihre Beiträge.";
+const CSS_CONTEXT = "Es gelten nur die gezeigten CSS-Regeln der Webseite, ohne zusätzliche Animationen oder Übergänge. " + SPECIFICITY_CONTEXT;
 const DOM_CONTEXT = "Das gezeigte HTML steht vollständig im body. Der Code läuft danach genau einmal; weitere Skripte oder Benutzereingaben gibt es nicht. Gefragt ist der Wert des letzten Ausdrucks.";
 
 export const CSS_MUTATION_QUESTIONS = [
   {
     id: "css-01", level: "Erstie", topic: "CSS-Spezifität", title: "Einen zusammengesetzten Selektor zerlegen",
-    question: "Welche Spezifität hat dieser Selektor? Geben Sie das Tripel (A, B, C) an und ordnen Sie seine Bestandteile den drei Gruppen zu.",
-    context: "A zählt ID-Selektoren, B zählt Klassen, Attributselektoren und gewöhnliche Pseudoklassen, C zählt Elementnamen und Pseudoelemente. Es geht um das Gewicht des Selektors, nicht um einen Regelgewinner.",
+    question: "Welche Spezifität hat dieser Selektor? Geben Sie die drei Zahlen (A, B, C) an und nennen Sie die Bestandteile, die in jeder Gruppe mitgezählt werden.",
+    context: SPECIFICITY_CONTEXT + " Berechnen Sie nur die Spezifität; eine bestimmte Webseite oder konkurrierende Regel ist hierfür nicht erforderlich.",
     css: '#portal .karte[data-status="frei"] > p.hinweis::first-line',
     choices: ["(1, 2, 3)", "(0, 4, 2)", "(1, 3, 2)", "(1, 4, 1)"], correctIndex: 2,
     choiceExplanations: [
@@ -14,10 +15,19 @@ export const CSS_MUTATION_QUESTIONS = [
       "#portal zählt in A; .karte, [data-status] und .hinweis in B; p und ::first-line in C.",
       "::first-line ist ein Pseudoelement in C. Der Kombinator > trägt kein Gewicht bei."
     ],
-    answer: {heading: "Spezifität (1, 3, 2)", lines: ["A: #portal", 'B: .karte, [data-status="frei"], .hinweis', "C: p, ::first-line"], explanation: "Die Schreibweise entscheidet über die Gruppe. Der Attributwert frei erhöht das Gewicht nicht. Leerraum und > beschreiben Beziehungen zwischen Elementen, erhöhen aber keine der drei Zahlen."}
+    answer: {
+      heading: "Die Spezifität beträgt (1, 3, 2)",
+      lines: [
+        "A = 1: #portal ist der einzige ID-Selektor.",
+        'B = 3: Die Klassen .karte und .hinweis sowie der Attributselektor [data-status="frei"] zählen jeweils einmal.',
+        "C = 2: p ist ein Elementname; ::first-line ist ein Pseudoelement. Beide zählen hier jeweils einmal.",
+        "Das Leerzeichen und > beschreiben Beziehungen zwischen Elementen und zählen in keiner Gruppe. Zusammengesetzt ergibt das (1, 3, 2)."
+      ],
+      explanation: "Zählen Sie die geschriebenen Selektorbestandteile. Der Attributwert frei und die Länge eines Namens liefern keine zusätzlichen Punkte."
+    }
   },
   {
-    id: "css-02", level: "Erstie", topic: "CSS-Spezifität", title: "Gewichte von links nach rechts vergleichen",
+    id: "css-02", level: "Erstie", topic: "CSS-Spezifität", title: "Spezifität von links nach rechts vergleichen",
     question: "Welche Textfarbe erhält der Absatz #ziel? Begründen Sie, welcher Vergleichsschritt entscheidet.",
     context: CSS_CONTEXT,
     html: '<main id="kurse" class="portal"><section class="karte"><p id="ziel" class="hinweis aktiv">Plätze frei</p></section></main>',
@@ -29,11 +39,20 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die Reihenfolge entscheidet hier nicht, weil die Spezifitäten verschieden sind.",
       "Die frühere Position und die Zeichenlänge sind kein Vorrangkriterium. Entscheidend ist der ID-Selektor."
     ],
-    answer: {heading: "Der Absatz wird blau", lines: ["#kurse p: (1, 0, 1)", ".portal .karte p.hinweis.aktiv: (0, 4, 1)"], explanation: "Spezifität ist ein geordnetes Tripel, keine gewöhnliche Dezimalzahl und keine Summe aller Bestandteile. Sobald A verschieden ist, entscheiden die Klassen und Elementnamen den Vergleich nicht mehr."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        "Beide Selektoren wählen den Absatz: Er liegt innerhalb von #kurse beziehungsweise .portal und .karte und trägt beide Klassen hinweis und aktiv.",
+        "#kurse p enthält einen ID-Selektor und einen Elementnamen: (1, 0, 1).",
+        ".portal .karte p.hinweis.aktiv enthält vier Klassen und einen Elementnamen, aber keine ID: (0, 4, 1).",
+        "Verglichen wird zuerst A: 1 ist größer als 0. Damit gewinnt color: blue; B und C müssen nicht mehr verglichen werden."
+      ],
+      explanation: "Bei gleicher Wichtigkeit und Schicht entscheidet die erste unterschiedliche Zahl von links. Vier Klassen werden nicht zu einer ID zusammengerechnet."
+    }
   },
   {
-    id: "css-03", level: "Erstie", topic: "CSS-Spezifität", title: "Direkte Kinder und Gewicht auseinanderhalten",
-    question: "Welche Farbe erhält #ziel, und weshalb? Beachten Sie sowohl die Treffer als auch die Gewichte der Regeln.",
+    id: "css-03", level: "Erstie", topic: "CSS-Spezifität", title: "Direkte Kinder und Spezifität unterscheiden",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Prüfen Sie zuerst, welche Selektoren ihn auswählen, und vergleichen Sie danach deren Spezifität.",
     context: CSS_CONTEXT,
     html: '<section class="karte"><p id="ziel" class="hinweis">Plätze frei</p></section>',
     css: '.karte .hinweis { color: red; }\n.karte > .hinweis { color: blue; }',
@@ -44,11 +63,20 @@ export const CSS_MUTATION_QUESTIONS = [
       "Bei sonst gleichem Vorrang gewinnt die später notierte Deklaration.",
       "Beide Selektoren treffen den Absatz und haben (0, 2, 0). Die blaue Regel steht später."
     ],
-    answer: {heading: "Blau durch die Reihenfolge", lines: ["Beide Selektoren: (0, 2, 0)", "Beide treffen das direkte p-Kind der Karte."], explanation: "Eine engere Treffermenge bedeutet nicht automatisch eine höhere Spezifität. Der Unterschied zwischen Leerzeichen und > verändert hier die Auswahlbedingung, nicht das Gewicht."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        ".karte .hinweis wählt das p aus: Es trägt die Klasse hinweis und liegt innerhalb des section-Elements mit der Klasse karte.",
+        ".karte > .hinweis wählt dasselbe p aus: Es ist sogar ein direktes Kind dieser section.",
+        "Beide Selektoren enthalten nur die zwei Klassen .karte und .hinweis: jeweils (0, 2, 0). Weder das Leerzeichen noch > erhöht eine der Zahlen.",
+        "Wichtigkeit, Schicht und Spezifität sind gleich. Deshalb gewinnt die später geschriebene Deklaration color: blue."
+      ],
+      explanation: "Ein Selektor kann die Auswahl stärker einschränken, ohne eine höhere Spezifität zu besitzen. Die Bedingung „direktes Kind“ liefert keinen zusätzlichen Punkt."
+    }
   },
   {
     id: "css-04", level: "Erstie", topic: "CSS-Spezifität", title: "Eine ID auf zwei Arten ansprechen",
-    question: "Welche Farbe erhält #ziel? Erklären Sie, ob beide Schreibweisen dasselbe Gewicht besitzen.",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Erklären Sie, ob beide Selektoren dieselbe Spezifität besitzen.",
     context: CSS_CONTEXT,
     html: '<p id="ziel" class="hinweis">Plätze frei</p>',
     css: '#ziel { color: blue; }\np[id="ziel"].hinweis { color: red; }',
@@ -59,7 +87,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Ein Attributselektor zählt einmal in B, unabhängig von der Länge seines Namens oder Werts.",
       "Attributselektoren können das id-Attribut auswählen. Sie haben dabei ein anderes Gewicht als #ziel."
     ],
-    answer: {heading: "Blau durch den ID-Selektor", lines: ["#ziel: (1, 0, 0)", 'p[id="ziel"].hinweis: (0, 2, 1)'], explanation: "Dass zwei Selektoren dasselbe Element finden, macht ihre Spezifität nicht gleich. Für die Berechnung zählt die Form des Selektors, nicht die Bedeutung des ausgewählten Attributs."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        'Beide Selektoren passen zu <p id="ziel" class="hinweis">. Sie setzen unterschiedliche Farben am selben Element.',
+        "#ziel ist ein ID-Selektor. Er zählt einmal in A: (1, 0, 0).",
+        'In p[id="ziel"].hinweis zählen [id="ziel"] und .hinweis in B; p zählt in C. Das ergibt (0, 2, 1).',
+        "Beim Vergleich entscheidet bereits A: 1 ist größer als 0. Die blaue Regel gewinnt trotz der späteren roten Regel."
+      ],
+      explanation: "Für die Spezifität zählt die Schreibweise: #ziel ist ein ID-Selektor, [id=\"ziel\"] ein Attributselektor. Dass beide dasselbe Element finden, macht ihre Beiträge nicht gleich."
+    }
   },
   {
     id: "css-05", level: "Master", topic: "CSS-Spezifität", title: "Eine Alternative in :is() berücksichtigen",
@@ -74,11 +111,20 @@ export const CSS_MUTATION_QUESTIONS = [
       "#archiv liefert das höchste Argumentgewicht (1, 0, 0); .hinweis ergänzt (0, 1, 0).",
       "Die Argumentgewichte werden nicht summiert. :is() übernimmt das Maximum."
     ],
-    answer: {heading: "Rot mit Spezifität (1, 1, 0)", lines: [":is(#archiv, .karte) .hinweis: (1, 1, 0)", ".karte .hinweis: (0, 2, 0)"], explanation: "Trefferprüfung und Gewichtung erfüllen unterschiedliche Aufgaben. Der Zweig .karte sorgt für den Treffer. Der stärkere ID-Zweig bestimmt trotzdem das Gewicht von :is()."}
+    answer: {
+      heading: "Der Absatz #ziel wird rot",
+      lines: [
+        ":is(#archiv, .karte) bedeutet hier: Ein Vorfahr muss #archiv oder .karte sein. Die section erfüllt .karte; ihr Absatz erfüllt .hinweis. Die rote Regel wählt den Absatz also aus, obwohl #archiv fehlt.",
+        "Auch .karte .hinweis wählt den Absatz aus, weil er die Klasse hinweis trägt und innerhalb der Karte liegt.",
+        ":is() übernimmt die höchste Spezifität eines Selektors in seiner Klammer: #archiv hat (1, 0, 0), .karte hat (0, 1, 0). Übernommen wird (1, 0, 0); .hinweis außerhalb der Klammer ergänzt (0, 1, 0). Rot hat damit (1, 1, 0).",
+        "Blau hat durch .karte und .hinweis die Spezifität (0, 2, 0). In A gewinnt Rot mit 1 gegenüber 0."
+      ],
+      explanation: "Bei :is() muss mindestens eine Alternative passen. Für seine Spezifität zählt dagegen die stärkste geschriebene Alternative, auch wenn gerade diese kein Element findet. Die Alternativen werden nicht addiert."
+    }
   },
   {
     id: "css-06", level: "Bachelor", topic: "CSS-Spezifität", title: "Den Kontext mit :where() eingrenzen",
-    question: "Welche Farbe erhält #ziel? Berechnen Sie beide Gewichte, bevor Sie vergleichen.",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Berechnen Sie die Spezifität beider Selektoren und nennen Sie die Zahl, die den Vergleich entscheidet.",
     context: CSS_CONTEXT,
     html: '<main id="portal"><p id="ziel" class="hinweis aktiv">Plätze frei</p></main>',
     css: ':where(#portal, .karte) p.hinweis { color: red; }\n.hinweis.aktiv { color: blue; }',
@@ -89,22 +135,41 @@ export const CSS_MUTATION_QUESTIONS = [
       "p zählt in C, .hinweis in B und :where() in keiner Gruppe.",
       ":where() trifft passende Elemente durchaus. Nullgewicht ist nicht mit fehlenden Treffern gleichzusetzen."
     ],
-    answer: {heading: "Blau mit (0, 2, 0)", lines: [":where(#portal, .karte) p.hinweis: (0, 1, 1)", ".hinweis.aktiv: (0, 2, 0)"], explanation: ":where() erlaubt, den Wirkungsbereich einer Regel genau zu beschreiben, ohne das Gewicht dieses Kontextes mitzunehmen. Das kann spätere gezielte Anpassungen erleichtern."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        ":where(#portal, .karte) passt zum main mit der ID portal. Das p mit der Klasse hinweis liegt darin. Damit wählt die rote Regel den Absatz aus.",
+        "Die blaue Regel wählt denselben Absatz aus, weil er sowohl hinweis als auch aktiv als Klasse trägt.",
+        ":where() und alles innerhalb seiner Klammer tragen zusammen (0, 0, 0) bei. Für Rot bleiben nur .hinweis in B und p in C: (0, 1, 1).",
+        "Blau enthält zwei Klassen und hat (0, 2, 0). A ist gleich; in B gewinnt Blau mit 2 gegenüber 1. Das p in Gruppe C kann diesen Unterschied nicht ausgleichen."
+      ],
+      explanation: ":where() schränkt ein, welche Elemente ausgewählt werden, ohne die Spezifität zu erhöhen. „Beitrag null“ bedeutet also nicht „kein Treffer“."
+    }
   },
   {
-    id: "css-07", level: "Master", topic: "CSS-Spezifität", title: "Eine Negation gewichten",
-    question: "Welche Farbe erhält #ziel? Welche Bedeutung hat das Argument #sperre für die Spezifität?",
+    id: "css-07", level: "Master", topic: "CSS-Spezifität", title: ":not(): Auswahl und Spezifität getrennt prüfen",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Begründen Sie, welche Regeln ihn auswählen und warum #sperre bei der Spezifität eine Rolle spielt, obwohl der Absatz nicht diese ID hat.",
     context: CSS_CONTEXT + " Der Absatz hat weder die Klasse ausgebucht noch die ID sperre.",
     html: '<section class="karte"><p id="ziel" class="hinweis">Plätze frei</p></section>',
     css: 'p:not(.ausgebucht, #sperre) { color: red; }\n.karte p.hinweis { color: blue; }',
     choices: ["Rot: :not() übernimmt das höchste Argumentgewicht; p ergänzt die Elementgruppe.", "Blau: Negierte Selektoren werden bei der Spezifität grundsätzlich nicht gezählt.", "Blau: :not() zählt nur eine gewöhnliche Pseudoklasse, unabhängig vom Inhalt.", "Rot: Weil das p passt, addiert :not() beide Argumentgewichte."], correctIndex: 0,
     choiceExplanations: [
       "Das stärkste Argument ist #sperre mit (1, 0, 0). Zusammen mit p ergibt das (1, 0, 1).",
-      "Das Negieren einer Bedingung entfernt nicht ihr Gewicht. :not() übernimmt das Maximum seiner Argumente.",
+      "Auch bei :not() werden die geschriebenen Selektoren in der Klammer für die Spezifität berücksichtigt. #sperre liefert hier den höheren Beitrag (1, 0, 0).",
       ":not() gehört zu den Ausnahmen: Es hat keinen eigenen B-Punkt, sondern übernimmt ein Argumentgewicht.",
       ":not() summiert seine Alternativen nicht. Für das Gewicht zählt nur die stärkste Alternative."
     ],
-    answer: {heading: "Rot durch (1, 0, 1)", lines: ["p:not(.ausgebucht, #sperre): (1, 0, 1)", ".karte p.hinweis: (0, 2, 1)"], explanation: "Die Negation trifft, weil der Absatz keine ihrer Ausschlussbedingungen erfüllt. Das bedeutet nicht, dass diese Bedingungen beim Berechnen des Gewichts verschwinden."}
+    answer: {
+      heading: "Der Absatz #ziel wird rot",
+      lines: [
+        "p:not(.ausgebucht, #sperre) wählt p-Elemente aus, die weder die Klasse ausgebucht noch die ID sperre haben. Unser Absatz hat class=\"hinweis\" und id=\"ziel\", also keines der beiden ausgeschlossenen Merkmale. Die rote Regel wählt ihn deshalb aus.",
+        "Auch .karte p.hinweis wählt diesen Absatz aus: Er ist ein p mit der Klasse hinweis innerhalb eines Elements mit der Klasse karte. Der blaue Selektor passt also ebenfalls zum Absatz.",
+        "Für :not() zählt der stärkste Selektor in seiner Klammer: .ausgebucht hat (0, 1, 0), #sperre hat (1, 0, 0). Übernommen wird nur (1, 0, 0), ohne zusätzlichen Punkt für :not() und ohne Addition beider Alternativen.",
+        "Bei der roten Regel kommt p mit (0, 0, 1) hinzu: insgesamt (1, 0, 1). Bei Blau zählen .karte und .hinweis in B sowie p in C: (0, 2, 1).",
+        "Verglichen wird von links nach rechts: In A steht für Rot 1 und für Blau 0. Rot gewinnt bereits hier. Dass die blaue Regel später steht, ändert das bei unterschiedlicher Spezifität nicht."
+      ],
+      explanation: "Bei :not(...) werden Elemente ausgewählt, die keine der Bedingungen in der Klammer erfüllen. Für die Spezifität zählt trotzdem die stärkste geschriebene Alternative, auch eine ID, die das Element gerade nicht haben darf."
+    }
   },
   {
     id: "css-08", level: "Master", topic: "CSS-Spezifität", title: "Eine Karte mit :has() gestalten",
@@ -119,12 +184,21 @@ export const CSS_MUTATION_QUESTIONS = [
       "Kombinatoren erhöhen die Spezifität nicht. Die Art der Beziehung entscheidet hier keinen Gewichtsvorsprung.",
       ".karte liefert (0, 1, 0), :has() übernimmt von #extra (1, 0, 0). Die Gewichte sind damit gleich."
     ],
-    answer: {heading: "Die Rahmenfarbe der Karte ist blau", lines: [".karte:has(> p.hinweis, #extra): (1, 1, 0)", "#kurse .karte: (1, 1, 0)"], explanation: ":has() prüft eine Beziehung vom ausgewählten Element aus. Hier wird die Karte gestaltet, weil sie ein passendes direktes Kind besitzt. Das höchste Argumentgewicht bleibt auch bei :has() unabhängig vom tatsächlich treffenden Zweig."}
+    answer: {
+      heading: "border-color der section erhält den Wert blue",
+      lines: [
+        ".karte:has(> p.hinweis, #extra) wählt die section aus: Sie hat die Klasse karte und besitzt ein direktes p-Kind mit der Klasse hinweis. Damit ist bereits eine der beiden :has()-Alternativen erfüllt; #extra muss nicht zusätzlich existieren.",
+        "#kurse .karte wählt dieselbe section aus, weil sie innerhalb von main#kurse liegt. Beide Regeln setzen also die Rahmenfarbe der Karte, nicht die des Absatzes.",
+        "In :has() stehen > p.hinweis mit (0, 1, 1) und #extra mit (1, 0, 0). Übernommen wird das höhere (1, 0, 0); .karte außerhalb der Klammer ergänzt (0, 1, 0). Rot hat (1, 1, 0).",
+        "#kurse .karte enthält eine ID und eine Klasse: ebenfalls (1, 1, 0). Bei gleicher Wichtigkeit, Schicht und Spezifität gewinnt die spätere blaue Regel."
+      ],
+      explanation: ":has() kann den Container anhand seiner Kinder auswählen. Für seine Spezifität zählt der stärkste Selektor in der Klammer. Ein sichtbarer Rahmen entsteht durch border-color allein noch nicht; hier ist nur der Farbwert gefragt."
+    }
   },
   {
     id: "css-09", level: "Master", topic: "CSS-Spezifität", title: "Die of-Liste einer Positionsregel gewichten",
-    question: "Welche Spezifität hat dieser Selektor als Tripel (A, B, C)? Erklären Sie insbesondere, ob die Zahl 2 einen Gewichtungsbeitrag liefert.",
-    context: "A steht für ID-Selektoren, B für Klassen, Attributselektoren und gewöhnliche Pseudoklassen, C für Elementnamen und Pseudoelemente. Nur das Selektorgewicht ist gefragt.",
+    question: "Welche Spezifität hat dieser Selektor als (A, B, C)? Begründen Sie die Beiträge von li, :nth-child() und der Liste nach of. Zählt die Positionszahl 2 zusätzlich mit?",
+    context: SPECIFICITY_CONTEXT + " Berechnen Sie nur die Spezifität; konkrete Treffer auf einer Webseite sind nicht gefragt.",
     css: 'li:nth-child(2 of .hinweis, #ziel)',
     choices: ["(1, 0, 1)", "(1, 1, 1)", "(1, 2, 1)", "(0, 2, 1)"], correctIndex: 1,
     choiceExplanations: [
@@ -133,11 +207,20 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die 2 ist eine Position, kein zusätzlicher B-Punkt. Außerdem werden die of-Alternativen nicht summiert.",
       "Die stärkste of-Alternative ist #ziel. Ihr Gewicht gehört in A, nicht in B."
     ],
-    answer: {heading: "Spezifität (1, 1, 1)", lines: ["li: (0, 0, 1)", ":nth-child(): (0, 1, 0)", "Stärkstes of-Argument #ziel: (1, 0, 0)"], explanation: "Bei :nth-child(... of ...) werden das Gewicht der Positions-Pseudoklasse und das höchste Gewicht der of-Liste addiert. Die Positionsformel ist keine Liste zusätzlicher Selektoren."}
+    answer: {
+      heading: "Die Spezifität beträgt (1, 1, 1)",
+      lines: [
+        "li ist ein Elementname und liefert (0, 0, 1).",
+        ":nth-child() ist hier eine Pseudoklasse mit einem eigenen Beitrag von (0, 1, 0). Die Zahl 2 benennt eine Position und zählt nicht zusätzlich.",
+        "Von der Liste nach of wird die höchste Spezifität übernommen: #ziel mit (1, 0, 0) ist stärker als .hinweis mit (0, 1, 0). Beide Alternativen werden nicht zusammengezählt.",
+        "Die drei Beiträge werden gruppenweise addiert: li (0, 0, 1) + :nth-child() (0, 1, 0) + of-Liste (1, 0, 0) = (1, 1, 1)."
+      ],
+      explanation: "Die Auswahlregel zählt zunächst nur Geschwisterelemente, die .hinweis oder #ziel erfüllen, und sucht darunter das zweite; zusätzlich muss das ausgewählte Element ein li sein. Diese Position ist von der Berechnung der Spezifität zu unterscheiden."
+    }
   },
   {
     id: "css-10", level: "Master", topic: "CSS-Spezifität", title: "Eine äußere Selektorliste von :is() unterscheiden",
-    question: "Welche Farbe erhält #ziel? Erläutern Sie, ob der nicht treffende ID-Zweig das Gewicht des treffenden Zweigs erhöht.",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Begründen Sie, welche der durch Kommas getrennten Selektoren ihn auswählen und ob #archiv zur Spezifität der roten Regel für diesen Absatz beiträgt.",
     context: CSS_CONTEXT + " Im Dokument gibt es kein Element mit id=archiv.",
     html: '<section class="karte"><p id="ziel" class="hinweis">Plätze frei</p></section>',
     css: '#archiv .hinweis, .hinweis { color: red; }\n.karte .hinweis { color: blue; }',
@@ -148,11 +231,20 @@ export const CSS_MUTATION_QUESTIONS = [
       "Für #ziel zählt hier der treffende .hinweis-Zweig. Die zweite Regel hat (0, 2, 0) und gewinnt.",
       "Ein gültiger Zweig ohne Treffer nimmt den anderen Zweigen ihre Wirkung nicht."
     ],
-    answer: {heading: "Blau durch den stärkeren treffenden Selektor", lines: ["Treffender roter Zweig .hinweis: (0, 1, 0)", "Blauer Selektor .karte .hinweis: (0, 2, 0)"], explanation: "Bei einer äußeren Selektorliste bleiben die Selektoren eigenständige Alternativen. Das ist ein wesentlicher Unterschied zu :is(), dessen Argumentliste das Gewicht der ganzen Funktion beeinflusst."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        "Das Komma trennt zwei eigenständige Selektoren für Rot: #archiv .hinweis und .hinweis. Der erste wählt den Absatz nicht aus, weil kein Vorfahr mit id=\"archiv\" existiert.",
+        "Der zweite rote Selektor .hinweis passt zur Klasse des Absatzes. Nur dieser treffende Selektor zählt hier für Rot: (0, 1, 0).",
+        "Die blaue Regel .karte .hinweis passt ebenfalls: Der Absatz mit der Klasse hinweis liegt innerhalb der Karte. Zwei Klassen ergeben (0, 2, 0).",
+        "A ist gleich; in B gewinnt Blau mit 2 gegenüber 1. Die ID im nicht passenden roten Selektor wird nicht auf den passenden Selektor .hinweis übertragen."
+      ],
+      explanation: "In einer durch Kommas getrennten Selektorliste außerhalb von Funktionen zählt für ein Element der stärkste tatsächlich passende Selektor. Bei :is() beeinflusst dagegen die stärkste Alternative in seiner Klammer den Beitrag der Funktion."
+    }
   },
   {
     id: "css-11", level: "Bachelor", topic: "CSS-Kaskade", title: "Zwei Deklarationen mit unterschiedlicher Wichtigkeit",
-    question: "Welche Farbe erhält #ziel? Ordnen Sie die Entscheidung dem richtigen Schritt der CSS-Kaskade zu.",
+    question: "Welche Textfarbe erhält der Absatz #ziel? Begründen Sie, was hier zuerst entscheidet: die Markierung !important oder die Spezifität der Selektoren.",
     context: CSS_CONTEXT,
     html: '<p id="ziel" class="hinweis">Plätze frei</p>',
     css: '.hinweis { color: red !important; }\n#ziel { color: blue; }',
@@ -163,7 +255,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "!important ist kein zusätzlicher Selektorbestandteil und verändert das Spezifitätstripel nicht.",
       "Die Reihenfolge ist nicht die Voraussetzung für !important. Die Wichtigkeit wird vorher ausgewertet."
     ],
-    answer: {heading: "Rot wegen !important", lines: [".hinweis behält die Spezifität (0, 1, 0).", "Die markierte Deklaration gewinnt gegenüber der normalen blauen Deklaration."], explanation: "Die Kaskade entscheidet nicht ausschließlich anhand der Selektorgewichte. !important kennzeichnet die Deklaration als wichtig; es ist kein Trick, um eine weitere ID in den Selektor hineinzurechnen."}
+    answer: {
+      heading: "Der Absatz #ziel wird rot",
+      lines: [
+        "Beide Selektoren passen zum Absatz: Er trägt die Klasse hinweis und die ID ziel. Beide Deklarationen setzen seine Eigenschaft color.",
+        "color: red ist mit !important als wichtig markiert; color: blue ist eine normale Deklaration. Beide stammen aus den gezeigten Seitenstilen.",
+        "Bei dieser gleichen Herkunft gewinnt die wichtige rote Deklaration vor dem Vergleich der Spezifität. Die höhere Spezifität von #ziel ändert daran nichts.",
+        "!important verändert keine der drei Zahlen: .hinweis behält (0, 1, 0), #ziel behält (1, 0, 0)."
+      ],
+      explanation: "Die CSS-Kaskade ist das Verfahren, mit dem der Browser konkurrierende Deklarationen ordnet. Herkunft und Wichtigkeit werden vor der Spezifität verglichen. !important ist kein zusätzlicher ID-Punkt."
+    }
   },
   {
     id: "css-12", level: "Bachelor", topic: "CSS-Kaskade", title: "Eine Deklaration im style-Attribut vergleichen",
@@ -178,7 +279,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Ohne !important würde der normale Inline-Stil gewinnen. Die Klasse allein erklärt den Vorrang nicht.",
       "Zuerst wirkt der Wichtigkeitsunterschied. Deshalb gewinnt hier die blaue Deklaration trotz des Inline-Stils."
     ],
-    answer: {heading: "Blau durch die wichtige Deklaration", lines: ["Inline: color: red — normal", "Stylesheet: color: blue !important — wichtig"], explanation: "Eine normale Deklaration im style-Attribut hat Vorrang vor normalen Autorenregeln. Diese Aussage gilt nicht unverändert, wenn die konkurrierende Deklaration wichtig ist. Herkunft und Wichtigkeit gehören vor den reinen Selektorvergleich."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        "style=\"color: red\" setzt direkt am Absatz einen normalen roten Wert. Dieser Stil im HTML-Attribut heißt Inline-Stil.",
+        "Der Absatz trägt die Klasse hinweis. Deshalb passt die Stylesheet-Regel und setzt an demselben Absatz color: blue mit !important.",
+        "Beide Vorgaben stammen vom Autor der Seite. Die wichtige blaue Deklaration hat Vorrang vor dem normalen roten Inline-Stil.",
+        "Ohne !important an color: blue würde in diesem Beispiel der normale rote Inline-Stil gewinnen. Die Klasse allein ist also nicht der Grund für Blau."
+      ],
+      explanation: "Ein normaler Inline-Stil hat Vorrang vor normalen Regeln aus dem Stylesheet. Eine wichtige Deklaration derselben Herkunft wird jedoch davor eingeordnet."
+    }
   },
   {
     id: "css-13", level: "Bachelor", topic: "CSS-Kaskade", title: "Geerbte Farbe und direkte Deklaration trennen",
@@ -189,11 +299,20 @@ export const CSS_MUTATION_QUESTIONS = [
     choices: ["Rot: Eine wichtige Deklaration am Vorfahren gewinnt gegen jede normale Deklaration am Kind.", "Rot: Die ID des Vorfahren wird bei der Spezifität der geerbten Farbe mitgezählt.", "Blau: Der Absatz hat einen eigenen color-Wert und benötigt die geerbte Farbe nicht.", "Blau: color wird grundsätzlich nie von einem Container an seine Kinder vererbt."], correctIndex: 2,
     choiceExplanations: [
       "Die wichtige Deklaration setzt color am main. Sie ist keine direkt konkurrierende Deklaration am p.",
-      "Die Spezifität einer Elternregel wird nicht als Schutzschild mit einem geerbten Wert weitergegeben.",
+      "#kurse wählt nur das main aus. Die Spezifität dieser Regel wird nicht an den Absatz weitergegeben, wenn er die Farbe erbt.",
       "p bekommt color direkt aus seiner eigenen Regel. Der geerbte Wert kommt hier nicht zum Einsatz.",
       "color ist eine vererbte Eigenschaft. Ohne eigene Deklaration würde der Absatz hier Rot erben."
     ],
-    answer: {heading: "Der Absatz wird blau", lines: ["main#kurse: color ist Rot.", "p#ziel: color wird direkt auf Blau gesetzt."], explanation: "Die Kaskade wird für das jeweilige Element und die jeweilige Eigenschaft betrachtet. Vererbung füllt hier erst den Wert, wenn am Kind kein eigener Wert festgelegt ist. Die Wichtigkeit der Elternregel wird nicht auf eine fiktive Kindregel übertragen."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        "#kurse wählt das main aus und setzt dessen color auf red. !important gibt dieser Deklaration Vorrang bei konkurrierenden Farben am main.",
+        "p wählt den Absatz #ziel aus und setzt dessen eigene Eigenschaft color auf blue. #kurse wählt diesen Absatz nicht aus.",
+        "color kann vom Elternteil geerbt werden. Der Absatz hat hier aber bereits einen eigenen blauen Wert; die rote Farbe des main wird deshalb nicht übernommen.",
+        "Entfernte man die Regel p { color: blue; }, würde der Absatz in diesem Beispiel Rot vom main erben."
+      ],
+      explanation: "Prüfen Sie zuerst, welches Element eine Regel auswählt. Eine wichtige Deklaration am Elternteil konkurriert nicht direkt mit einer Deklaration am Kind; die Wichtigkeit wird nicht mit der Farbe vererbt."
+    }
   },
   {
     id: "css-14", level: "Master", topic: "CSS-Kaskade", title: "Normale Regeln in Kaskadenschichten vergleichen",
@@ -208,7 +327,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Für normale Deklarationen ist die spätere Schicht stärker. Die umgekehrte Reihenfolge gilt bei wichtigen Deklarationen.",
       "Die Gewichte werden nicht gelöscht. Innerhalb derselben Schicht können sie weiterhin entscheidend sein."
     ],
-    answer: {heading: "Blau durch die Schicht anwendung", lines: ["Schichtreihenfolge: basis, dann anwendung", "Normale Deklaration in anwendung gewinnt vor dem Spezifitätsvergleich."], explanation: "Kaskadenschichten können den Vorrang von Regelgruppen festlegen, ohne immer stärkere Selektoren zu erfinden. Ein ID-Selektor gewinnt daher nicht pauschal gegen jede Klasse in einer anderen Schicht."}
+    answer: {
+      heading: "Der Absatz #ziel wird blau",
+      lines: [
+        "#ziel und .hinweis wählen beide den Absatz aus. Beide color-Deklarationen sind normal, also ohne !important.",
+        "@layer basis, anwendung legt die Reihenfolge der Schichten fest: zuerst basis, danach anwendung. Schichten sind benannte Gruppen von CSS-Regeln.",
+        "Bei normalen Deklarationen derselben Herkunft hat die später angelegte Schicht Vorrang. Deshalb gewinnt color: blue aus anwendung gegen color: red aus basis.",
+        "Die Spezifitäten bleiben (1, 0, 0) für #ziel und (0, 1, 0) für .hinweis. Sie entscheiden hier aber nicht, weil der Schichtvergleich bereits entschieden ist."
+      ],
+      explanation: "Bei Regeln in verschiedenen Kaskadenschichten prüfen Sie den Schichtvorrang vor der Spezifität. Innerhalb derselben Schicht kann die Spezifität weiterhin entscheiden."
+    }
   },
   {
     id: "css-15", level: "Master", topic: "CSS-Kaskade", title: "Wichtige Regeln in Kaskadenschichten vergleichen",
@@ -223,7 +351,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die Wichtigkeit verschwindet nicht, wenn beide Deklarationen wichtig sind. Der Schichtvergleich bleibt maßgeblich.",
       "Die Klasse ist nicht stärker als die ID. Der Vorrang ist bereits durch die Schicht entschieden."
     ],
-    answer: {heading: "Rot durch den Vorrang der ersten Schicht", lines: ["Wichtige Deklaration in basis gewinnt.", "Der Spezifitätsvorsprung von #ziel in anwendung ändert das Ergebnis nicht."], explanation: "Bei wichtigen Deklarationen wird die Priorität der Kaskadenschichten umgekehrt. Deshalb müssen zuerst Herkunft, Wichtigkeit und Schicht geklärt werden, bevor ein Spezifitätsvergleich eine sinnvolle Aussage erlaubt."}
+    answer: {
+      heading: "Der Absatz #ziel wird rot",
+      lines: [
+        ".hinweis und #ziel wählen beide den Absatz aus. Beide color-Deklarationen stammen aus den Seitenstilen und sind mit !important markiert.",
+        "@layer basis, anwendung legt basis als erste und anwendung als zweite Schicht fest.",
+        "Für wichtige Deklarationen ist der Schichtvorrang gegenüber normalen Deklarationen umgekehrt: Die zuerst angelegte Schicht basis gewinnt. Darin steht color: red !important.",
+        "Die höhere Spezifität von #ziel in anwendung kommt nicht mehr zum Vergleich. Zwei !important-Markierungen heben sich nicht gegenseitig auf."
+      ],
+      explanation: "Innerhalb derselben Herkunft gilt zwischen benannten Schichten: normal → die spätere Schicht gewinnt; wichtig → die frühere Schicht gewinnt. Erst innerhalb derselben Schicht kann die Spezifität entscheiden."
+    }
   },
   {
     id: "mutation-01", level: "Erstie", topic: "DOM-Veränderungen", title: "Zwei Variablen und ein Button",
@@ -238,7 +375,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "const verhindert eine neue Zuweisung an die Variable, nicht die Änderung einer Eigenschaft des referenzierten Objekts.",
       "Beide Variablen verweisen auf dasselbe Element. Seine Textänderung ist über beide Zugriffe sichtbar; es bleibt ein Button."
     ],
-    answer: {heading: 'Ergebnis: ["Weiter", true, 1]', lines: ["erste und zweite verweisen auf dasselbe HTMLButtonElement.", "Es wurde kein neues Element angelegt."], explanation: "Eine DOM-Referenz ist ein Verweis auf ein vorhandenes Objekt, keine Kopie seines HTML-Texts. const schützt die Variablenbindung vor Neuzuweisung, friert das referenzierte Objekt jedoch nicht ein."}
+    answer: {
+      heading: 'Ergebnis: ["Weiter", true, 1]',
+      lines: [
+        "querySelector findet das vorhandene button-Element. Mit zweite = erste wird kein Button kopiert: Beide Variablen geben Zugriff auf dasselbe DOM-Objekt.",
+        'zweite.textContent = "Weiter" ändert den Text dieses gemeinsamen Buttons. Daher liefert auch erste.textContent den String "Weiter".',
+        "erste === zweite ist true, weil beide Variablen auf dasselbe Objekt verweisen. querySelectorAll(\"button\").length bleibt 1, weil kein weiteres Element angelegt wurde.",
+        "const verhindert eine spätere Zuweisung eines anderen Werts an erste oder zweite. Eine Eigenschaft des bereits vorhandenen Objekts wie textContent darf trotzdem geändert werden."
+      ],
+      explanation: "Ein Verweis auf ein DOM-Objekt ist keine Kopie des Elements. Änderungen über einen solchen Verweis sind auch über andere Variablen sichtbar, die auf dasselbe Objekt verweisen."
+    }
   },
   {
     id: "mutation-02", level: "Bachelor", topic: "DOM-Veränderungen", title: "Einen vorhandenen Absatz anhängen",
@@ -253,7 +399,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Ein Knoten kann hier nicht zugleich direktes Kind beider sections bleiben. links verliert den Absatz.",
       "Die Position ändert sich, die Identität des Absatzes nicht. Die Rückgabe ist derselbe Knoten."
     ],
-    answer: {heading: "Ergebnis: [0, 1, true]", lines: ["Der Absatz ist jetzt direktes Kind von #rechts.", "#links enthält danach kein Kindelement."], explanation: "appendChild verschiebt einen bereits existierenden Knoten. Für eine unabhängige Kopie wäre ein eigener Klonschritt erforderlich. Der Rückgabewert bezeichnet den angehängten Knoten."}
+    answer: {
+      heading: "Ergebnis: [0, 1, true]",
+      lines: [
+        "Anfangs ist p#kurs ein direktes Kind von section#links; section#rechts ist leer.",
+        "rechts.appendChild(absatz) hängt genau diesen vorhandenen Absatz bei #rechts an. Dabei wird er automatisch aus #links entfernt; es entsteht keine Kopie.",
+        "#links hat danach keine direkten Kindelemente: links.children.length ist 0. #rechts hat genau den Absatz als Kindelement: rechts.children.length ist 1.",
+        "appendChild gibt den angehängten Knoten zurück. rueckgabe und absatz bezeichnen deshalb denselben Absatz; rueckgabe === absatz ist true."
+      ],
+      explanation: "Ein vorhandener Knoten wird beim Anhängen verschoben und behält seine Objektidentität. Für eine zweite unabhängige Ausgabe müsste zunächst ein neues Element oder eine Kopie erzeugt werden."
+    }
   },
   {
     id: "mutation-03", level: "Master", topic: "DOM-Veränderungen", title: "Einen Button mit Inhalt klonen",
@@ -268,7 +423,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Der Text wird kopiert, der mit addEventListener registrierte Behandler nicht. Die Kopie ist ein anderes Objekt.",
       "Ein Klon ist nicht identisch mit dem Original. Außerdem wird der registrierte Behandler nicht geklont."
     ],
-    answer: {heading: 'Ergebnis: [1, "Start", false]', lines: ["cloneNode(true) kopiert Attribute und untergeordnete Knoten.", "addEventListener-Behandler werden nicht mitkopiert."], explanation: "Eine visuell gleich aussehende Kopie besitzt nicht automatisch dasselbe Ereignisverhalten. Der Parameter true betrifft den Teilbaum, nicht sämtliche intern gespeicherten Eigenschaften des Originals."}
+    answer: {
+      heading: 'Ergebnis: [1, "Start", false]',
+      lines: [
+        "cloneNode(true) erzeugt ein neues button-Objekt und kopiert seine Attribute sowie seine Kindknoten. Der Textknoten Start wird mitkopiert. Die anschließende Zuweisung ändert nur die ID der Kopie.",
+        "Der mit addEventListener registrierte click-Listener wird nicht kopiert. Ein Listener ist die Funktion, die bei einem passenden Ereignis aufgerufen wird.",
+        "original.click() ruft den Listener am Original auf: aufrufe steigt von 0 auf 1. kopie.click() löst zwar einen Klick aus, hat aber keinen solchen Listener; der Zähler bleibt 1.",
+        'kopie.textContent ist "Start". original === kopie ist false, weil Original und Kopie zwei verschiedene DOM-Objekte sind.'
+      ],
+      explanation: "cloneNode(true) kopiert den DOM-Teilbaum. Mit addEventListener hinzugefügte Funktionen gehören nicht zu dieser Kopie und müssten bei Bedarf erneut registriert werden."
+    }
   },
   {
     id: "mutation-04", level: "Master", topic: "DOM-Veränderungen", title: "Den Text eines Containers ersetzen",
@@ -283,7 +447,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die Zuweisung schreibt keinen neuen Text in das abgetrennte span. Gesetzt wurde textContent am div.",
       "Der neue Inhalt Neu ist ein Textknoten, kein Kindelement. Das alte span ist nicht mehr mit dem Dokument verbunden."
     ],
-    answer: {heading: 'Ergebnis: [0, 1, false, "Alt"]', lines: ["#box enthält danach genau einen Textknoten mit Neu.", "Das gespeicherte span ist abgetrennt, aber über die Variable weiter erreichbar."], explanation: "Ein Objekt aus dem DOM zu entfernen löscht nicht automatisch jede Referenz auf dieses Objekt. Gleichzeitig ist das Setzen von textContent am Container ein struktureller Eingriff: Untergeordnete Elemente werden ersetzt."}
+    answer: {
+      heading: 'Ergebnis: [0, 1, false, "Alt"]',
+      lines: [
+        "gespeichert bezeichnet zunächst das span mit dem Text Alt. Die Variable enthält einen Verweis auf dieses Element, keine automatisch aktualisierte Suche nach dem jeweils ersten Kind.",
+        'box.textContent = "Neu" entfernt die bisherigen Kinder span und em aus #box. An ihre Stelle kommt genau ein Textknoten mit Neu.',
+        "children zählt nur direkte Kindelemente: box.children.length ist 0. childNodes zählt alle direkten Kindknoten, also auch den neuen Textknoten: box.childNodes.length ist 1.",
+        "Das alte span hängt nicht mehr im Dokument: gespeichert.isConnected ist false. Über die Variable ist es aber noch erreichbar. Sein eigener Text wurde nicht geändert, deshalb bleibt gespeichert.textContent gleich \"Alt\"."
+      ],
+      explanation: "textContent am Container ersetzt dessen Kinder. Ein entferntes Element kann über eine zuvor gespeicherte Variable weiter existieren; es wird dadurch nicht zum neuen Inhalt des Containers."
+    }
   },
   {
     id: "mutation-05", level: "Erstie", topic: "DOM-Veränderungen", title: "Eine Zeichenkette als Text ausgeben",
@@ -298,7 +471,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die Zeichenfolge <strong> wird nicht automatisch entfernt. Bei textContent gehört sie zum Text.",
       "Der Text wird zwar vollständig erhalten, aber es wird kein Element daraus erzeugt. children.length ist deshalb 0."
     ],
-    answer: {heading: 'Ergebnis: [0, "<strong>Neu</strong>"]', lines: ["Es entsteht ein Textknoten, kein strong-Element.", "Die Tagzeichen werden als Text ausgegeben."], explanation: "Wenn Eingaben als reiner Text erscheinen sollen, trennt textContent Daten von HTML-Struktur. Das ist auch sicherer als ungeprüfte Eingaben als HTML interpretieren zu lassen. Der dargestellte Inhalt wird hier nicht ausgeführt."}
+    answer: {
+      heading: 'Ergebnis: [0, "<strong>Neu</strong>"]',
+      lines: [
+        'eingabe ist eine Zeichenkette. Ihre Zeichen sehen wie HTML aus: "<strong>Neu</strong>".',
+        "ausgabe.textContent = eingabe erstellt daraus einen Textknoten. Die Zeichen <strong> und </strong> werden als Text behandelt; es wird kein strong-Element erzeugt.",
+        "children zählt nur Kindelemente, keine Textknoten. Daher ist ausgabe.children.length gleich 0.",
+        'ausgabe.textContent liest die vollständige Zeichenkette einschließlich der spitzen Klammern zurück: "<strong>Neu</strong>".'
+      ],
+      explanation: "Mit textContent ausgegebene Eingaben bleiben Text. Das verhindert an dieser Ausgabestelle, dass mitgelieferte HTML-Zeichen als neue Elemente oder ausführbarer Inhalt interpretiert werden."
+    }
   },
   {
     id: "mutation-06", level: "Bachelor", topic: "DOM-Veränderungen", title: "Eine Klasse mit und ohne Zielzustand umschalten",
@@ -313,7 +495,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Der dritte Aufruf enthält keinen Zielzustand. Er fügt die inzwischen fehlende Klasse wieder hinzu.",
       "Die ersten beiden Aufrufe sorgen für keine Klasse aktiv und liefern false. Der dritte schaltet auf vorhanden um und liefert true."
     ],
-    answer: {heading: "Ergebnis: [false, false, true, true]", lines: ["toggle(\"aktiv\", false) erzwingt das Entfernen.", "toggle(\"aktiv\") wechselt den aktuellen Zustand."], explanation: "Der optionale zweite Parameter von toggle ist ein gewünschter Zustand. Der Rückgabewert beschreibt, ob die Klasse nach dem Aufruf vorhanden ist. Das unterscheidet sich von einer Rückmeldung darüber, ob überhaupt etwas geändert wurde."}
+    answer: {
+      heading: "Ergebnis: [false, false, true, true]",
+      lines: [
+        "Anfangs enthält class=\"karte aktiv\" die Klasse aktiv. Der erste Aufruf toggle(\"aktiv\", false) entfernt sie. Danach fehlt sie; a ist false.",
+        "Der zweite Aufruf hat wieder den zweiten Parameter false. Er verlangt erneut „aktiv soll fehlen“. Die Klasse bleibt entfernt; b ist ebenfalls false.",
+        "Der dritte Aufruf toggle(\"aktiv\") hat keinen zweiten Parameter und kehrt den aktuellen Zustand um. Die bisher fehlende Klasse wird hinzugefügt; c ist true.",
+        "contains(\"aktiv\") prüft den Zustand nach allen Aufrufen. Die Klasse ist jetzt vorhanden, deshalb ist auch der vierte Arraywert true."
+      ],
+      explanation: "Mit einem zweiten Parameter legt toggle einen Zielzustand fest; ohne ihn schaltet toggle um. Der Rückgabewert sagt, ob die Klasse danach vorhanden ist, nicht ob gerade eine Änderung nötig war."
+    }
   },
   {
     id: "mutation-07", level: "Bachelor", topic: "DOM-Veränderungen", title: "Eine Zahl in einem data-Attribut bearbeiten",
@@ -328,7 +519,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die explizite Number-Umwandlung verhindert hier die Zeichenkettenverkettung 2 plus 1 zu 21.",
       "dataset und getAttribute greifen hier auf dasselbe data-freie-plaetze-Attribut zu. Die Zuweisung aktualisiert dessen Wert."
     ],
-    answer: {heading: 'Ergebnis: ["3", "string", "3"]', lines: ["data-freie-plaetze wird in dataset als freiePlaetze angesprochen.", "Die Rechnung ergibt die Zahl 3; das Attribut speichert den String \"3\"."], explanation: "HTML-Attributwerte sind Zeichenketten. Eine richtige Rechnung benötigt gegebenenfalls eine bewusste Zahlenumwandlung. Das anschließende Speichern im DOM macht daraus keine dauerhaft numerische dataset-Eigenschaft."}
+    answer: {
+      heading: 'Ergebnis: ["3", "string", "3"]',
+      lines: [
+        'dataset.freiePlaetze greift auf data-freie-plaetze zu. Anfangs liefert es den Attributwert als Zeichenkette "2".',
+        "Number wandelt \"2\" in die Zahl 2 um. Erst danach wird 1 addiert; neu enthält die Zahl 3 und nicht die Zeichenkette \"21\".",
+        'Die Zuweisung an dataset.freiePlaetze speichert die Zahl als Attributtext "3". Beim erneuten Lesen liefert dataset deshalb "3"; typeof ergibt "string".',
+        'getAttribute("data-freie-plaetze") liest dasselbe inzwischen geänderte Attribut. Auch der dritte Arraywert lautet "3".'
+      ],
+      explanation: "dataset verbindet JavaScript-Namen wie freiePlaetze mit data-Attributen wie data-freie-plaetze. Die Attributwerte bleiben Zeichenketten; eine Rechnung benötigt bei solchen Eingaben eine Zahlenumwandlung."
+    }
   },
   {
     id: "mutation-08", level: "Bachelor", topic: "DOM-Veränderungen", title: "Aktuellen Eingabewert und HTML-Vorgabe trennen",
@@ -343,7 +543,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "value enthält Neu. getAttribute und defaultValue beziehen sich weiterhin auf die HTML-Vorgabe Start.",
       "defaultValue spiegelt hier die Attributvorgabe, nicht den inzwischen geänderten aktuellen Eingabewert."
     ],
-    answer: {heading: 'Ergebnis: ["Neu", "Start", "Start"]', lines: ["Aktueller Wert: Neu", "value-Attribut und defaultValue: Start"], explanation: "DOM-Eigenschaft und HTML-Attribut sind nicht immer derselbe veränderliche Wert. Bei einem Texteingabefeld trennt der Browser den aktuellen Wert von der Vorgabe, auf die etwa ein Formular-Reset zurückgreifen kann."}
+    answer: {
+      heading: 'Ergebnis: ["Neu", "Start", "Start"]',
+      lines: [
+        'Das HTML-Attribut value="Start" gibt den ursprünglichen Wert des Textfelds vor. Zu Beginn erscheint Start im Feld.',
+        'feld.value = "Neu" ändert den aktuellen Eingabewert. feld.value liefert danach "Neu"; dieser Wert würde im Feld angezeigt.',
+        'Die Zuweisung an die Eigenschaft value schreibt hier nicht das HTML-Attribut um. feld.getAttribute("value") liefert weiterhin "Start".',
+        'defaultValue spiegelt die Vorgabe im value-Attribut. Deshalb liefert feld.defaultValue ebenfalls "Start".'
+      ],
+      explanation: "Bei einem Texteingabefeld müssen aktueller Wert und Vorgabewert getrennt betrachtet werden. Die Eigenschaft value hält den aktuellen Wert; das value-Attribut und defaultValue halten hier die Vorgabe."
+    }
   },
   {
     id: "mutation-09", level: "Bachelor", topic: "Ereignisse", title: "Ursprung und Empfänger eines Ereignisses erkennen",
@@ -358,7 +567,16 @@ export const CSS_MUTATION_QUESTIONS = [
       "Der ausgeführte Listener ist an #bereich registriert. Deshalb ist currentTarget während dieses Aufrufs #bereich.",
       "target ist span#symbol, currentTarget ist im Listener der registrierte Empfänger div#bereich."
     ],
-    answer: {heading: 'Ergebnis: ["symbol", "bereich"]', lines: ["target: Ursprung des hier ausgelösten Ereignisses", "currentTarget: Element des gerade ausgeführten Listeners"], explanation: "Ein Listener an einem Container kann Ereignisse seiner Nachfahren verarbeiten. Für diese Ereignisdelegation muss man unterscheiden, wo das Ereignis entstanden ist und an welchem Element der eigene Listener registriert wurde."}
+    answer: {
+      heading: 'Ergebnis: ["symbol", "bereich"]',
+      lines: [
+        "dispatchEvent wird an span#symbol aufgerufen. Dieses span ist hier der Ausgangspunkt des Ereignisses; event.target bleibt deshalb #symbol.",
+        "bubbles: true erlaubt dem Ereignis, zu den Vorfahren weiterzugehen: vom span über den button zu div#bereich.",
+        "Die mit addEventListener registrierte Funktion sitzt an #bereich. Während genau diese Funktion läuft, ist event.currentTarget deshalb #bereich.",
+        'Die Funktion liest die IDs beider Elemente: event.target.id ist "symbol", event.currentTarget.id ist "bereich". Genau diese zwei Strings werden in protokoll gespeichert.'
+      ],
+      explanation: "Ein Listener ist eine Funktion, die bei einem Ereignis aufgerufen wird. Hier benennt target den Ausgangspunkt des Ereignisses; currentTarget benennt das Element, an dem der gerade laufende Listener registriert ist."
+    }
   },
   {
     id: "mutation-10", level: "Master", topic: "Ereignisse", title: "Weitergabe stoppen und weitere Listener unterscheiden",
@@ -373,22 +591,40 @@ export const CSS_MUTATION_QUESTIONS = [
       "Der Container-Listener in der Blasenphase wird wegen stopPropagation nicht erreicht.",
       "Es wurde kein Listener für die Erfassungsphase registriert. Der Eltern-Listener läuft hier weder zuerst noch später."
     ],
-    answer: {heading: 'Ergebnis: ["eins", "zwei"]', lines: ["Beide Listener an #taste werden aufgerufen.", "Der Blasenphasen-Listener an #bereich wird nicht aufgerufen."], explanation: "Die Weitergabe eines Ereignisses an weitere Elemente und die Bearbeitung durch weitere Listener am selben Element sind unterschiedliche Dinge. stopPropagation beendet nicht automatisch jeden noch ausstehenden Listener."}
+    answer: {
+      heading: 'Ergebnis: ["eins", "zwei"]',
+      lines: [
+        "taste.click() löst den Klick am Button #taste aus. Seine beiden click-Listener laufen in der Reihenfolge, in der addEventListener sie registriert hat.",
+        'Der erste Listener fügt "eins" ein. stopPropagation() verhindert danach die Weitergabe des Ereignisses zum Vorfahren #bereich.',
+        'Der zweite Listener sitzt ebenfalls an #taste. Er wird durch stopPropagation() nicht gestoppt und fügt "zwei" ein.',
+        'Der Listener an #bereich wartet auf das Aufsteigen des Ereignisses. Er wird nicht erreicht; "eltern" kommt daher nicht ins Array.'
+      ],
+      explanation: "stopPropagation() stoppt den Weg zu weiteren Elementen. Weitere Listener am gerade bearbeiteten Element laufen weiter. Um auch diese zu stoppen, wäre stopImmediatePropagation() nötig."
+    }
   },
   {
     id: "mutation-11", level: "Master", topic: "Ereignisse", title: "Status und Rückgabe eines eigenen Ereignisses",
-    question: "Welches Array liefert der letzte Ausdruck? Unterscheiden Sie Abbruchstatus, Weitergabe zum Container und den Rückgabewert von dispatchEvent().",
+    question: "Welches Array liefert der letzte Ausdruck? Prüfen Sie getrennt, was preventDefault() an defaultPrevented ändert, ob der Container-Listener läuft und welchen Wert dispatchEvent() zurückgibt.",
     context: DOM_CONTEXT + " kurswahl ist ein selbst erzeugtes Ereignis. Es ist abbrechbar (cancelable: true) und darf aufsteigen (bubbles: true). Die Listener sind nicht passiv; weitere Listener existieren nicht.",
     html: '<div id="bereich"><button id="taste" type="button">Wählen</button></div>',
     code: 'const taste = document.querySelector("#taste");\nlet elternAufgerufen = false;\ntaste.addEventListener("kurswahl", event => event.preventDefault());\ndocument.querySelector("#bereich").addEventListener("kurswahl", () => { elternAufgerufen = true; });\nconst ereignis = new Event("kurswahl", {bubbles: true, cancelable: true});\nconst zugelassen = taste.dispatchEvent(ereignis);\n[ereignis.defaultPrevented, elternAufgerufen, zugelassen]',
     choices: ["[true, false, false]", "[false, true, true]", "[true, true, false]", "[true, true, true]"], correctIndex: 2,
     choiceExplanations: [
       "preventDefault beendet nicht das Aufsteigen des Ereignisses. Der Container-Listener läuft weiterhin.",
-      "Das Ereignis ist ausdrücklich abbrechbar und der Listener nicht passiv. preventDefault setzt deshalb den Abbruchstatus.",
-      "Der Abbruchstatus wird true, das Ereignis steigt weiter auf, und dispatchEvent meldet den Abbruch mit false.",
-      "dispatchEvent liefert bei einem durch preventDefault abgebrochenen, abbrechbaren Ereignis false."
+      "cancelable: true erlaubt preventDefault(), den Status defaultPrevented auf true zu setzen. Der Listener ist nicht passiv und darf dies deshalb tun.",
+      "preventDefault setzt defaultPrevented auf true. Der Container-Listener läuft trotzdem. dispatchEvent gibt wegen dieses gesetzten Status false zurück.",
+      "dispatchEvent gibt hier false zurück, weil preventDefault bei einem abbrechbaren Ereignis aufgerufen wurde. false bedeutet nicht, dass die Listener nicht gelaufen wären."
     ],
-    answer: {heading: "Ergebnis: [true, true, false]", lines: ["defaultPrevented ist true.", "Der Container-Listener wird ausgeführt.", "dispatchEvent gibt false zurück."], explanation: "preventDefault markiert ein abbrechbares Ereignis als abgebrochen. Es stoppt nicht dessen Weg durch den DOM-Baum. Bei einem eigenen Ereignis wie kurswahl kann die aufrufende Anwendung den Rückgabewert auswerten; damit wird nicht automatisch eine eigene Anwendungsaktion ausgeführt oder verhindert."}
+    answer: {
+      heading: "Ergebnis: [true, true, false]",
+      lines: [
+        "dispatchEvent löst kurswahl an #taste aus und führt die passenden Listener aus, bevor der Aufruf zurückkehrt.",
+        "Der Listener am Button ruft preventDefault() auf. Weil das Ereignis cancelable: true hat und der Listener nicht passiv ist, wird ereignis.defaultPrevented zu true.",
+        "preventDefault() stoppt nicht die Weitergabe. Wegen bubbles: true erreicht das Ereignis auch #bereich; dessen Listener setzt elternAufgerufen auf true.",
+        "dispatchEvent gibt bei einem so markierten abbrechbaren Ereignis false zurück. Deshalb ist zugelassen gleich false, obwohl beide Listener ausgeführt wurden."
+      ],
+      explanation: "preventDefault() fordert an, eine mit dem Ereignis verbundene Standardaktion zu unterlassen. Es stoppt keine Listener. Für das eigene Ereignis kurswahl existiert keine eingebaute Browseraktion; der Anwendungscode kann den Status beziehungsweise die Rückgabe selbst auswerten."
+    }
   },
   {
     id: "mutation-12", level: "Master", topic: "DOM-Veränderungen", title: "Mehrere Knoten mit einem Fragment einfügen",
@@ -403,6 +639,15 @@ export const CSS_MUTATION_QUESTIONS = [
       "Die Kinder werden verschoben, nicht kopiert. Deshalb bleiben sie nicht zusätzlich im Fragment.",
       "Die p-Elemente werden direkte Kinder des Ziels und zählen in children mit. Ein Fragmentknoten bleibt dort nicht stehen."
     ],
-    answer: {heading: "Ergebnis: [2, 0, 1]", lines: ["#kurse bekommt zwei direkte p-Kinder.", "Das DocumentFragment enthält danach keine Kindknoten mehr."], explanation: "Ein DocumentFragment kann mehrere Knoten vorübergehend aufnehmen. Beim Einfügen werden seine Kinder übernommen; es erzeugt dabei keine zusätzliche sichtbare oder unsichtbare Elternebene im Zielbaum."}
+    answer: {
+      heading: "Ergebnis: [2, 0, 1]",
+      lines: [
+        "createDocumentFragment() erzeugt einen vorübergehenden Behälter für Knoten. fragment.append(...) fügt dort zwei neu erzeugte p-Elemente ein; #kurse bleibt bis dahin leer.",
+        "ziel.appendChild(fragment) verschiebt die beiden Kinder des Fragments direkt nach #kurse. Das Fragment selbst wird nicht als weiteres Kind eingefügt.",
+        "#kurse besitzt danach zwei direkte Kindelemente: ziel.children.length ist 2. Das Fragment hat seine Kinder abgegeben: fragment.childNodes.length ist 0.",
+        "Das erste Kind von #kurse ist nun ein p-Element. Sein nodeType ist 1; es ist kein DocumentFragment mit nodeType 11."
+      ],
+      explanation: "Ein Fragment kann mehrere Knoten für das Einfügen sammeln. Es erzeugt beim Einfügen keine zusätzliche Elternebene; seine Kinder wechseln direkt zum Ziel."
+    }
   }
 ];

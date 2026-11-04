@@ -19,7 +19,7 @@ export const EXAMPLE_TASKS = Object.freeze([
     answer: {
       heading: "Ein einzelnes Element",
       lines: ['<p id="frei" class="hinweis">', "Rückgabetyp: HTMLParagraphElement → HTMLElement → Element → Node"],
-      explanation: "querySelector liefert das erste passende Element in Dokumentreihenfolge. Hier ist das der Absatz „Plätze frei“. Der zweite passende Absatz gehört nicht zu dieser Rückgabe."
+      explanation: "Beide Absätze besitzen die Klasse hinweis. querySelector liefert davon nur das erste Element in Dokumentreihenfolge: den Absatz „Plätze frei“. Die Pfeile zeigen die Typ-Hierarchie dieses einen Objekts: Ein HTMLParagraphElement ist zugleich ein HTMLElement, ein Element und ein Node. Es entstehen keine weiteren Objekte; der zweite Absatz gehört nicht zur Rückgabe."
     }
   },
   {
@@ -29,7 +29,7 @@ export const EXAMPLE_TASKS = Object.freeze([
     answer: {
       heading: "NodeList mit zwei Elementen",
       lines: ["Rückgabetyp: NodeList", "length = 2", '[0]: <p id="frei" class="hinweis">', '[1]: <p id="kontakt" class="hinweis">'],
-      explanation: "querySelectorAll liefert eine statische NodeList. Ihre Einträge stehen in Dokumentreihenfolge. Der Kontakt-Absatz ist das zweite Element und wird mit Index [1] erreicht. Die NodeList ist eine Sammlung, kein einzelnes Element und kein Array."
+      explanation: "Beide Absätze besitzen die Klasse hinweis und stehen in der NodeList in Dokumentreihenfolge. Der Kontakt-Absatz ist das zweite Element und wird mit Index [1] erreicht. Statisch bedeutet: Ein später ergänzter passender Absatz wird nicht automatisch in diese bereits gespeicherte Liste aufgenommen. Die NodeList ist eine Sammlung, kein einzelnes Element und kein Array."
     }
   },
   {
@@ -71,14 +71,14 @@ export const EXAMPLE_TASKS = Object.freeze([
     html: '<main id="kurse"><p id="frei" class="hinweis">Plätze frei</p></main>',
     code: 'const lebend = document.getElementsByClassName("hinweis");\nconst statisch = document.querySelectorAll(".hinweis");\nconst neu = document.createElement("p");\nneu.className = "hinweis";\nneu.textContent = "Neuer Kurs";\ndocument.querySelector("#kurse").append(neu);\nlebend.length\nstatisch.length',
     answer: {
-      heading: "Die Mitgliedschaft verändert sich unterschiedlich",
+      heading: "lebend enthält zwei Absätze, statisch weiterhin einen",
       lines: ["lebend.length = 2", "statisch.length = 1"],
-      explanation: "getElementsByClassName liefert eine lebende HTMLCollection: Der neue passende Absatz wird automatisch Mitglied. querySelectorAll liefert eine statische NodeList: Ihre bei der Abfrage festgelegte Mitgliedschaft bleibt unverändert. Die referenzierten Elemente selbst werden dadurch nicht eingefroren. Der gezeigte Code ist ein Gedankenexperiment und wird hier nicht auf Ihrer Webseite ausgeführt."
+      explanation: "Anfangs enthalten beide Sammlungen nur den Absatz #frei. append hängt einen zweiten Absatz mit der Klasse hinweis an. Die lebende HTMLCollection lebend nimmt diesen neuen Treffer automatisch auf und hat danach length = 2. Die zuvor mit querySelectorAll gespeicherte NodeList statisch enthält weiterhin nur #frei und hat length = 1. Statisch betrifft die Liste der enthaltenen Elemente: Würde sich der Text von #frei ändern, wäre der neue Text auch über statisch[0].textContent lesbar. Der Beispielcode wird hier nicht auf Ihrer Webseite ausgeführt."
     }
   }
 ].map(task => Object.freeze({
   ...task,
-  context: "Eingebautes Beispiel. Betrachten Sie ausschließlich das gezeigte HTML mit seiner genauen Formatierung.",
+  context: "Eingebautes Beispiel. Betrachten Sie ausschließlich das gezeigte HTML mit seiner genauen Formatierung. Denken Sie sich den Code einmal nach diesem HTML ausgeführt; weitere Skripte oder Benutzereingaben gibt es nicht.",
   notes: Object.freeze([]),
   answer: Object.freeze({...task.answer, lines: Object.freeze(task.answer.lines)})
 })));

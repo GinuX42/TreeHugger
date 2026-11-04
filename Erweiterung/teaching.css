@@ -162,6 +162,25 @@
   white-space: pre-wrap;
 }
 
+.teaching-answer h4 {
+  margin: 16px 0 8px;
+  color: #1f6b3a;
+}
+
+.teaching-answer .quiz-answer-steps {
+  padding-left: 28px;
+}
+
+.teaching-answer .quiz-answer-steps li {
+  margin-bottom: 14px;
+  padding-left: 4px;
+  color: #1f6b3a;
+}
+
+.quiz-answer-steps li::marker {
+  font-weight: 700;
+}
+
 .quiz-area {
   margin: 20px 0 28px;
   padding: clamp(16px, 2.5vw, 28px);

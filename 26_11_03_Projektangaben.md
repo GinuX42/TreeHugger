@@ -1,6 +1,6 @@
 # TreeHugger – Projektangaben
 
-Version 1.4.1 · Stand: 03.11.2026.
+Version 1.4.2 · Stand: 03.11.2026.
 
 **Idee, Konzeption und fachliche Projektleitung: Gino Peduto**
 

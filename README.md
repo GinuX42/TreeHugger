@@ -1,12 +1,12 @@
 # TreeHugger
 
-**Version 1.4.1 (03.11.2026).** Das Installationspaket enthält den Unterrichtsmodus mit **54 Quizfragen**, den drei Leveln **Erstie, Bachelor und Master**, offenen Antworten oder **Multiple Choice** sowie drei überarbeiteten Musterseiten.
+**Version 1.4.2 (03.11.2026).** Die Installationsanleitung beginnt jetzt mit der Einrichtung in Chrome; Unterricht und Quiz werden anschließend erklärt. Das Installationspaket enthält weiterhin den Unterrichtsmodus mit **54 Quizfragen**, den drei Leveln **Erstie, Bachelor und Master**, offenen Antworten oder **Multiple Choice** sowie drei überarbeiteten Musterseiten.
 
 Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
 
-[Installationspaket 1.4.1 herunterladen](https://github.com/GinuX42/TreeHugger/raw/refs/heads/main/26_11_03_TreeHugger_1_4_1.zip) · [Bebilderte Anleitung](26_11_03_Installation.html) · [SHA-256-Prüfsumme](26_11_03_TreeHugger_1_4_1_SHA256.txt)
+[Installationspaket 1.4.2 herunterladen](https://github.com/GinuX42/TreeHugger/raw/refs/heads/main/26_11_03_TreeHugger_1_4_2.zip) · [Bebilderte Installationsanleitung](26_11_03_Installationsanleitung.html) · [SHA-256-Prüfsumme](26_11_03_TreeHugger_1_4_2_SHA256.txt)
 
-Die HTML-Anleitung enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
+Die Datei **26_11_03_Installationsanleitung.html** enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
 
 ## Installation in Chrome
 
@@ -85,7 +85,7 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabenstruktur, Level- und Themenfilter, Antwortzuordnung, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Die Fassung 1.4.1 konnte wegen einer Zugriffssperre nicht im persönlichen Chrome-Profil installiert oder visuell geprüft werden.
+Alternativ genügt `node --test` im Projektordner. Die automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabenstruktur, Level- und Themenfilter, Antwortzuordnung, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Beim zuletzt vollständig geprüften Funktionsstand bestanden alle 140 Tests; Version 1.4.2 ändert die Anleitung und die Paketverweise. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Eine Installation oder visuelle Prüfung der neuen Fassung im persönlichen Chrome-Profil wurde nicht durchgeführt.
 
 Weitere Einzelheiten und das tatsächliche Testergebnis stehen in den [Prüfhinweisen](26_11_03_Pruefhinweise.md).
 

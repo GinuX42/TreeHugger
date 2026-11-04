@@ -1,6 +1,6 @@
 {
   "name": "treehugger",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "description": "Chrome-Erweiterung zur Visualisierung des DOM und zum Erkunden von Quellcode und CSS-Spezifität im Unterricht.",
   "type": "module",

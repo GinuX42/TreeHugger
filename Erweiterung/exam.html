@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TreeHugger · Klausurfragen</title>
+  <link rel="stylesheet" href="exam.css"><script type="module" src="exam-view.js"></script>
+</head>
+<body>
+<header><img src="icon48.png" width="48" height="48" alt=""><h1>Klausurfragen</h1><a href="installation.html#klausuren" target="_blank">Hilfe</a></header>
+<main>
+  <nav aria-label="Klausurbereich"><button id="manage">Fragenverwaltung</button><button id="practice">Bearbeitungen und Ergebnisse</button></nav>
+  <p id="status" role="status"></p>
+  <section id="manager">
+    <h2>Fragenverwaltung</h2>
+    <p>Stellen Sie einzelne Aufgaben zusammen oder wählen Sie den Klausursatz mit zwölf offenen Fragen und 60 Punkten. Die 54 Quizaufgaben stehen zusätzlich zur Auswahl.</p>
+    <div class="toolbar"><button id="chooseExam">Klausursatz auswählen</button><button id="clear">Auswahl aufheben</button><button id="start">Bearbeitung starten</button></div>
+    <p id="selected" aria-live="polite"></p>
+    <details><summary>Export und Datensicherung</summary>
+      <p>Aufgaben und Musterlösungen lassen sich getrennt als JSON exportieren. Eine Sicherung enthält auch die lokal gespeicherten Antworten und Punkte.</p>
+      <div class="toolbar"><button id="tasks">Aufgaben exportieren</button><button id="solutions">Musterlösungen exportieren</button><button id="backup">Sicherung exportieren</button><label class="file">Sicherung importieren <input id="restore" type="file" accept=".json,application/json"></label></div>
+    </details>
+    <div class="toolbar"><button id="new">Neue Frage</button></div>
+    <form id="editor" hidden>
+      <h2>Frage bearbeiten</h2>
+      <label>Titel <input id="title" required maxlength="20000"></label>
+      <label>Aufgabe mit Ausgangscode <textarea id="question" rows="8" required maxlength="20000"></textarea></label>
+      <label>Antwortform <select id="type"><option value="open">Offene Antwort</option><option value="choice">Auswahlantwort</option></select></label>
+      <fieldset id="choiceFields" hidden><legend>Auswahlantworten</legend><label>Eine Antwort pro Zeile <textarea id="choices" rows="4"></textarea></label><label>Nummer der richtigen Antwort <input id="correct" type="number" min="1" max="8" value="1"></label></fieldset>
+      <label>Punkte <input id="points" type="number" min="1" max="100" value="1" required></label>
+      <label>Musterlösung und Teilpunkte <textarea id="solution" rows="6" required maxlength="20000"></textarea></label>
+      <button type="submit">Frage speichern</button><button id="cancel" type="button">Abbrechen</button>
+    </form>
+    <label>Fragen filtern <input id="filter" type="search" placeholder="Titel oder Fragentext"></label><div id="bank"></div>
+  </section>
+  <section id="runner" hidden><h2>Bearbeitungen und Ergebnisse</h2>
+    <label>Gespeicherte Bearbeitung <select id="attempts"></select></label>
+    <div class="toolbar"><button id="resultExport">Ergebnis exportieren</button><button id="deleteAttempt">Bearbeitung löschen</button></div>
+    <div id="attempt"></div>
+  </section>
+</main></body></html>

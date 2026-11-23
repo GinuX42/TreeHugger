@@ -1,24 +1,25 @@
 # TreeHugger
 
-**Version 1.4.2 (03.11.2026).** Die Installationsanleitung beginnt jetzt mit der Einrichtung in Chrome; Unterricht und Quiz werden anschließend erklärt. Das Installationspaket enthält weiterhin den Unterrichtsmodus mit **54 Quizfragen**, den drei Leveln **Erstie, Bachelor und Master**, offenen Antworten oder **Multiple Choice** sowie drei überarbeiteten Musterseiten.
+**Version 1.5.0 · 23.11.2026**
 
-Eine Chrome-Erweiterung zum Erkunden einer Webseite: als grafischer DOM-Baum, anhand von Auswahlmethoden und in einer lesbaren Quellcode-Ansicht. Die Oberfläche und die Anleitung sind auf Deutsch.
+TreeHugger ist eine deutschsprachige Chrome-Erweiterung für den Web-Unterricht. Sie macht den DOM-Baum einer Webseite sichtbar, erklärt Auswahlmethoden und CSS-Spezifität und zeigt HTML, CSS und JavaScript. Version 1.5.0 ergänzt die 54 Quizfragen um einen Klausursatz mit zwölf offenen Aufgaben, Musterlösungen und insgesamt 60 Punkten.
 
-[Installationspaket 1.4.2 herunterladen](https://github.com/GinuX42/TreeHugger/raw/refs/heads/main/26_11_03_TreeHugger_1_4_2.zip) · [Bebilderte Installationsanleitung](26_11_03_Installationsanleitung.html) · [SHA-256-Prüfsumme](26_11_03_TreeHugger_1_4_2_SHA256.txt)
+[Windows-Setup herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.5.0/TreeHugger-1.5.0-Setup.exe) · [Release und SHA-256-Prüfsumme](https://github.com/GinuX42/TreeHugger/releases/tag/v1.5.0)
 
-Die Datei **26_11_03_Installationsanleitung.html** enthält ihre Bilder bereits eingebettet. Laden Sie sie herunter und öffnen Sie sie im Browser, oder öffnen Sie die Anleitung aus dem entpackten Installationspaket.
+## Installation unter Windows
 
-## Installation in Chrome
+1. Öffnen Sie **TreeHugger-1.5.0-Setup.exe** und klicken Sie auf **Installieren**. Das Setup speichert die vollständige Erweiterung für das aktuelle Windows-Benutzerkonto. Mit **Pfad kopieren** übernehmen Sie den Installationspfad.
+2. Öffnen Sie in Google Chrome `chrome://extensions` und aktivieren Sie oben rechts den **Entwicklermodus**.
+3. Klicken Sie auf **Entpackte Erweiterung laden** und wählen Sie den vom Setup angezeigten Ordner. Die Vorgabe lautet `%LOCALAPPDATA%\TreeHugger\Erweiterung`.
+4. Öffnen Sie eine Webseite. Klicken Sie oben auf das Puzzleteil und dann auf **TreeHugger**. Für lokale HTML-Dateien aktivieren Sie zusätzlich **Zugriff auf Datei-URLs zulassen** in den Erweiterungsdetails.
 
-1. Laden Sie das Installationspaket herunter und entpacken Sie es vollständig.
-2. Öffnen Sie `chrome://extensions` in Chrome.
-3. Schalten Sie oben rechts den **Entwicklermodus** ein.
-4. Klicken Sie auf **Entpackte Erweiterung laden** und wählen Sie den Unterordner **Erweiterung** aus. Darin liegt die Datei `manifest.json`.
-5. Öffnen Sie eine Webseite und starten Sie **TreeHugger** über das Puzzleteil-Symbol in Chrome. Sie können das Symbol dort anheften.
+Das Setup enthält die Anleitung, Musterseiten und alle Laufzeitdateien. Für die Nutzung benötigen Sie Google Chrome und unter Windows das .NET Framework 4.5 oder neuer. Zum manuellen Laden aus dem Quellcode wählen Sie in Schritt 3 direkt den Repository-Ordner **Erweiterung**. Im Setup öffnet **Anleitung öffnen** die mitgelieferte Hilfe.
 
-Für lokale HTML-Seiten aktivieren Sie in den Details der Erweiterung zusätzlich **Zugriff auf Datei-URLs zulassen**. Chrome-interne Seiten wie `chrome://settings` können nicht untersucht werden. Bewahren Sie den Erweiterungsordner auf; Chrome verwendet die entpackten Dateien weiterhin.
+## Klausurfragen
 
-Wer das Repository herunterlädt oder klont, kann ebenfalls dessen Unterordner **Erweiterung** direkt laden. Es ist kein Build und keine Installation von npm-Abhängigkeiten nötig.
+Öffnen Sie im TreeHugger-Fenster **Klausurfragen → Klausursatz auswählen → Bearbeitung starten**. Jede der zwölf neuen Aufgaben bringt fünf Punkte. Die Aufgaben behandeln unter anderem Live-Sammlungen, Ereignisdelegation, DOM-Veränderungen, das Boxmodell und `defer`. Die Musterlösung weist für jeden Antwortteil Punkte aus. Nach der Abgabe bewerten Lernende offene Antworten selbst. Eigene Auswahlfragen werden automatisch ausgewertet.
+
+Sie können die Fragen zusammenstellen, filtern und bearbeiten sowie eigene Aufgaben anlegen. Aufgaben und Lösungsschlüssel lassen sich getrennt als JSON exportieren. Eine Gesamtsicherung enthält die Fragen und Bearbeitungen und lässt sich wieder importieren. Antworten bleiben im lokalen Browserprofil. Die Erweiterung dient der Vorbereitung und Selbstkontrolle. Lehrkräfte und Lernende mit Zugriff auf die Fragenverwaltung können die Lösungen einsehen.
 
 ## Funktionen
 
@@ -67,9 +68,11 @@ Die Datei wird als Text angezeigt und nicht ausgeführt. Sie wird nicht automati
 
 Die obere Farbleiste einer Baumkarte bezeichnet den Knotentyp. Die zweite Leiste bei Elementen bezeichnet die Elementgruppe. So gehört etwa `<p>` zur Elementgruppe „Textinhalt“, bleibt aber ein Element und ist kein Textknoten.
 
-## Aktualisieren
+## Aktualisieren und entfernen
 
-Ersetzen Sie die bisherigen Erweiterungsdateien vollständig durch die neue Fassung, einschließlich des Unterordners `vendor`. Laden Sie TreeHugger anschließend unter `chrome://extensions` neu. Schließen Sie alte Ansichts-Tabs und öffnen Sie das Tool auf der Quellseite erneut über sein Symbol.
+Bei einer vorhandenen Setup-Installation führen Sie das neue Setup aus und klicken anschließend in Chrome auf **Neu laden**. Bei einer früher manuell entpackten Version laden Sie den neuen Setup-Ordner einmal über **Entpackte Erweiterung laden**. Entfernen Sie nach der Kontrolle den alten Eintrag. Exportieren Sie benötigte Klausurdaten vor einem Ordner- oder Profilwechsel.
+
+Zur Deinstallation sichern Sie bei Bedarf Ihre Daten, entfernen den Eintrag in Chrome und wählen im Setup **Entfernen**.
 
 ## Verarbeitung und Grenzen
 
@@ -85,9 +88,11 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Alternativ genügt `node --test` im Projektordner. Die automatisierten Tests prüfen unter anderem DOM-Erfassung, Auswahlrückgaben, Quellenzugriff, sichere Textdarstellung, Attribute in Baumkarten, lokale Dateiauswahl, Farben, Formatierung und Spezifität. Hinzu kommen Aufgabenstruktur, Level- und Themenfilter, Antwortzuordnung, verborgene Antworten, verspätete Abfrageergebnisse, die vollständige Quizrunde und die veränderbare Musterseite. Beim zuletzt vollständig geprüften Funktionsstand bestanden alle 140 Tests; Version 1.4.2 ändert die Anleitung und die Paketverweise. Browser-Schnittstellen werden nachgebildet; dies ersetzt keinen echten Chrome-Praxistest. Eine Installation oder visuelle Prüfung der neuen Fassung im persönlichen Chrome-Profil wurde nicht durchgeführt.
+Version 1.5.0 bestand unter Windows alle 147 automatisierten Node-Tests. Die Tests prüfen unter anderem den DOM-Baum, Auswahlmethoden, Quellcode, CSS-Spezifität, Quiz, Klausurauswahl, Einreichung, Teilpunkte, Datenwiederherstellung und getrennte Exporte. Die Browser-Schnittstellen werden im Test nachgebildet.
 
-Weitere Einzelheiten und das tatsächliche Testergebnis stehen in den [Prüfhinweisen](26_11_03_Pruefhinweise.md).
+Das Setup wurde in einem eigenen Testordner installiert, erneut ausgeführt und deinstalliert. Alle 62 installierten Programmdateien stimmten nach beiden Installationen byteweise mit dem Quellstand überein. Ein zusätzlicher Test prüft, dass das Setup fremde Dateien bei einer Aktualisierung oder Deinstallation schützt.
+
+Unter Windows lässt sich das Paket mit `windows/build.ps1` erzeugen und mit `windows/test-setup.ps1 -SetupPath dist/TreeHugger-1.5.0-Setup.exe` prüfen.
 
 ## Projektangaben und Fremdkomponenten
 

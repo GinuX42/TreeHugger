@@ -8,6 +8,7 @@ import {getInitiallyExpandedIds} from "./tree-layout.js";
 import {isWhitespaceNode} from "./node-presentation.js";
 import {createNoticeView} from "./notice-view.js";
 import {createFocusView} from "./focus-view.js";
+import {createFloatingToolbar} from "./floating-toolbar.js";
 import {createSourceView} from "./source-view.js";
 import {createTeachingView} from "./teaching-view.js";
 
@@ -30,7 +31,8 @@ const state = {
 
 const noticeView = createNoticeView();
 const treeView = createTreeView({onSelect: selectNode, onToggle: toggleBranch, onMessage: noticeView.showMessage});
-const focusView = createFocusView({onChange: treeView.applyZoom});
+const floatingToolbar = createFloatingToolbar({toolbar: byId("canvasToolbar"), handle: byId("toolbarDrag")});
+const focusView = createFocusView({onChange: treeView.applyZoom, onFocusChange: floatingToolbar.setActive});
 const detailsView = createDetailsView({
   onSelect: revealNode,
   onHighlight: highlightNode,

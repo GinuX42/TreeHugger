@@ -867,17 +867,50 @@ body.tree-focus {
 }
 
 .tree-focus .canvas-toolbar {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+  position: fixed;
+  top: 8px;
+  left: auto;
+  right: auto;
   z-index: 2;
-  max-width: calc(100% - 20px);
-  padding: 7px;
-  gap: 8px;
+  width: max-content;
+  height: 42px;
+  flex: none;
+  flex-wrap: nowrap;
+  max-width: calc(100vw - 16px);
+  padding: 4px;
+  gap: 4px;
+  font-size: 12px;
   border: 1px solid #c7d3df;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 3px 12px #17314920;
 }
+
+#toolbarDrag { display: none; }
+.tree-focus #toolbarDrag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex: 0 0 24px;
+  padding: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  color: #526e84;
+  background: transparent;
+  border-color: transparent;
+  font-size: 18px;
+}
+.tree-focus #toolbarDrag.dragging { cursor: grabbing; }
+.tree-focus .canvas-toolbar button {
+  height: 32px;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 20px;
+}
+.tree-focus .zoom { gap: 4px; flex: none; }
+.tree-focus .zoom output { width: 42px; min-width: 42px; flex: none; font-size: 12px; }
 
 .workspace.source-mode {
   display: flex;

@@ -1,6 +1,6 @@
 import {byId, setText} from "./ui-dom.js";
 
-export function createFocusView({onChange}) {
+export function createFocusView({onChange, onFocusChange = () => {}}) {
   const button = byId("focusToggle");
   const viewport = byId("viewport");
   let active = false;
@@ -14,6 +14,7 @@ export function createFocusView({onChange}) {
     button.setAttribute("aria-pressed", String(active));
     button.title = active ? "Normale Ansicht wiederherstellen (Esc)" : "Den ganzen Inhaltsbereich für den Baum nutzen";
     setText(button, active ? "← Zurück" : "Nur Baum");
+    onFocusChange(active);
     onChange();
     if (!active && previousScroll) viewport.scrollTo(previousScroll);
     button.focus({preventScroll: true});

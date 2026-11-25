@@ -3,15 +3,34 @@ const MARGIN = 8;
 export function clampToolbarPosition(position, size, viewport) {
   return {
     x: Math.max(MARGIN, Math.min(position.x, Math.max(MARGIN, viewport.width - size.width - MARGIN))),
-    y: Math.max(MARGIN, Math.min(position.y, Math.max(MARGIN, viewport.height - size.height - MARGIN)))
+    y: 0
   };
 }
 
-// The toolbar is a sibling of the drawing. Only the tree is scaled.
-export function createFloatingToolbar({toolbar, handle, viewport = globalThis}) {
+// The toolbar keeps its own row above the viewport. Horizontal dragging never covers the tree.
+export function createFloatingToolbar({toolbar, handle, toggle, viewport = globalThis}) {
   let active = false;
   let position = null;
   let drag = null;
+  let collapsed = true;
+
+  function setCollapsed(next) {
+    collapsed = next;
+    toolbar.classList.toggle('toolbar-collapsed', collapsed);
+    toggle?.setAttribute('aria-expanded', String(!collapsed));
+    if (toggle) {
+      toggle.title = collapsed ? 'Bedienung öffnen · Esc: zurück zur normalen Ansicht' : 'Bedienung einklappen';
+      toggle.setAttribute('aria-label', collapsed ? 'Bedienung öffnen' : 'Bedienung einklappen');
+      toggle.textContent = collapsed ? '⋯' : '×';
+    }
+  }
+
+  toggle?.addEventListener('click', () => {
+    const bounds = toolbar.getBoundingClientRect();
+    setCollapsed(!collapsed);
+    const width = toolbar.getBoundingClientRect().width;
+    place({x: bounds.left + bounds.width - width, y: bounds.top});
+  });
 
   function place(next = position) {
     if (!active) return;
@@ -44,7 +63,7 @@ export function createFloatingToolbar({toolbar, handle, viewport = globalThis}) 
   for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) handle.addEventListener(name, stopDrag);
   handle.addEventListener('keydown', event => {
     if (!active) return;
-    const moves = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]};
+    const moves = {ArrowLeft: [-1, 0], ArrowRight: [1, 0]};
     if (event.key === 'Home') {
       event.preventDefault();
       place(null);
@@ -63,7 +82,10 @@ export function createFloatingToolbar({toolbar, handle, viewport = globalThis}) 
     setActive(next) {
       active = next;
       stopDrag();
-      if (active) place();
+      if (active) {
+        if (toggle) setCollapsed(true);
+        place();
+      }
       else {
         toolbar.style.left = '';
         toolbar.style.top = '';

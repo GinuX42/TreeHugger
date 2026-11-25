@@ -17,7 +17,8 @@ export function createFocusView({onChange, onFocusChange = () => {}}) {
     onFocusChange(active);
     onChange();
     if (!active && previousScroll) viewport.scrollTo(previousScroll);
-    button.focus({preventScroll: true});
+    const focusTarget = active ? document.getElementById("toolbarMenu") ?? button : button;
+    focusTarget.focus({preventScroll: true});
   }
 
   button.addEventListener("click", () => setActive(!active));

@@ -249,6 +249,9 @@ a {
   font-size: 13px;
 }
 
+.toolbar-controls { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+#toolbarMenu { display: none; }
+
 .zoom {
   display: flex;
   align-items: center;
@@ -867,17 +870,18 @@ body.tree-focus {
 }
 
 .tree-focus .canvas-toolbar {
-  position: fixed;
-  top: 8px;
+  position: relative;
+  top: 0;
   left: auto;
   right: auto;
   z-index: 2;
   width: max-content;
-  height: 42px;
+  min-height: 32px;
+  margin: 2px 0;
   flex: none;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   max-width: calc(100vw - 16px);
-  padding: 4px;
+  padding: 2px;
   gap: 4px;
   font-size: 12px;
   border: 1px solid #c7d3df;
@@ -902,10 +906,15 @@ body.tree-focus {
   font-size: 18px;
 }
 .tree-focus #toolbarDrag.dragging { cursor: grabbing; }
+.tree-focus #toolbarMenu { display: inline-flex; align-items: center; justify-content: center; width: 28px; padding: 0; font-size: 20px; }
+.tree-focus .toolbar-controls { flex: none; gap: 4px; flex-wrap: wrap; }
+.tree-focus .toolbar-collapsed .toolbar-controls { display: none; }
+.tree-focus .toolbar-collapsed { gap: 2px; }
+.tree-focus .toolbar-collapsed #toolbarDrag { width: 24px; flex-basis: 24px; }
 .tree-focus .canvas-toolbar button {
-  height: 32px;
+  height: 28px;
   flex-shrink: 0;
-  padding: 4px 8px;
+  padding: 2px 8px;
   font-size: 12px;
   line-height: 20px;
 }

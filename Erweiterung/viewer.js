@@ -31,7 +31,7 @@ const state = {
 
 const noticeView = createNoticeView();
 const treeView = createTreeView({onSelect: selectNode, onToggle: toggleBranch, onMessage: noticeView.showMessage});
-const floatingToolbar = createFloatingToolbar({toolbar: byId("canvasToolbar"), handle: byId("toolbarDrag")});
+const floatingToolbar = createFloatingToolbar({toolbar: byId("canvasToolbar"), handle: byId("toolbarDrag"), toggle: byId("toolbarMenu")});
 const focusView = createFocusView({onChange: treeView.applyZoom, onFocusChange: floatingToolbar.setActive});
 const detailsView = createDetailsView({
   onSelect: revealNode,

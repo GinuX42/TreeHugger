@@ -1,14 +1,22 @@
 # TreeHugger
 
-**Version 1.5.0 · 23.11.2026**
+**Version 1.5.2 · 25.11.2026**
 
-TreeHugger ist eine deutschsprachige Chrome-Erweiterung für den Web-Unterricht. Sie macht den DOM-Baum einer Webseite sichtbar, erklärt Auswahlmethoden und CSS-Spezifität und zeigt HTML, CSS und JavaScript. Version 1.5.0 ergänzt die 54 Quizfragen um einen Klausursatz mit zwölf offenen Aufgaben, Musterlösungen und insgesamt 60 Punkten.
+TreeHugger ist eine deutschsprachige Chrome-Erweiterung für den Web-Unterricht. Sie macht den DOM-Baum einer Webseite sichtbar, erklärt Auswahlmethoden und CSS-Spezifität und zeigt HTML, CSS und JavaScript. Enthalten sind 54 Quizfragen sowie zwölf offene Klausuraufgaben mit Musterlösungen und insgesamt 60 Punkten. Version 1.5.2 ergänzt eine ein- und ausklappbare Bedienung außerhalb der Baumfläche sowie eine lesbare Übersicht beim Herauszoomen.
 
-[Windows-Setup herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.5.0/TreeHugger-1.5.0-Setup.exe) · [Release und SHA-256-Prüfsumme](https://github.com/GinuX42/TreeHugger/releases/tag/v1.5.0)
+[Windows-Setup herunterladen](https://github.com/GinuX42/TreeHugger/releases/download/v1.5.2/26_11_25_TreeHugger_1.5.2_Setup.exe) · [Release und SHA-256-Prüfsumme](https://github.com/GinuX42/TreeHugger/releases/tag/v1.5.2)
+
+## Freie Baumansicht und lesbarer Zoom
+
+In **Nur Baum** liegt die Bedienung in einem schmalen Bereich oberhalb des Baums. Sie verdeckt keine Baumknoten. Standardmäßig ist sie eingeklappt: Mit **⋯** öffnen Sie Vergrößern, Verkleinern, **Einpassen**, **Lesbar** und **Zurück**. Mit **×** klappen Sie die Bedienung wieder ein. **Esc** führt zur normalen Ansicht zurück.
+
+Ziehen Sie den Griff **⠿** nach links oder rechts, um die Bedienung innerhalb ihres Bereichs zu verschieben. Alternativ fokussieren Sie den Griff mit Tab und verwenden die Pfeiltasten; **Pos1** setzt die Position zurück. Die Bedienung wird beim Baum-Zoom nicht mitvergrößert.
+
+Beim Herauszoomen wechseln die Karten zu einer kurzen Übersicht mit lesbaren Knotennamen. **Lesbar** stellt 100 % ein und zeigt den ausgewählten Knoten. **Einpassen** verkleinert den Baum höchstens auf 30 %. Sehr große Bäume bleiben deshalb scrollbar, statt unlesbar klein zu werden. Der SVG-Export enthält weiterhin die vollständigen Kartendetails.
 
 ## Installation unter Windows
 
-1. Öffnen Sie **TreeHugger-1.5.0-Setup.exe** und klicken Sie auf **Installieren**. Das Setup speichert die vollständige Erweiterung für das aktuelle Windows-Benutzerkonto. Mit **Pfad kopieren** übernehmen Sie den Installationspfad.
+1. Öffnen Sie **26_11_25_TreeHugger_1.5.2_Setup.exe** und klicken Sie auf **Installieren**. Das Setup speichert die vollständige Erweiterung für das aktuelle Windows-Benutzerkonto. Mit **Pfad kopieren** übernehmen Sie den Installationspfad.
 2. Öffnen Sie in Google Chrome `chrome://extensions` und aktivieren Sie oben rechts den **Entwicklermodus**.
 3. Klicken Sie auf **Entpackte Erweiterung laden** und wählen Sie den vom Setup angezeigten Ordner. Die Vorgabe lautet `%LOCALAPPDATA%\TreeHugger\Erweiterung`.
 4. Öffnen Sie eine Webseite. Klicken Sie oben auf das Puzzleteil und dann auf **TreeHugger**. Für lokale HTML-Dateien aktivieren Sie zusätzlich **Zugriff auf Datei-URLs zulassen** in den Erweiterungsdetails.
@@ -88,11 +96,11 @@ Die Tests verwenden die eingebauten Testwerkzeuge von **Node.js ab Version 20**.
 npm test
 ```
 
-Version 1.5.0 bestand unter Windows alle 147 automatisierten Node-Tests. Die Tests prüfen unter anderem den DOM-Baum, Auswahlmethoden, Quellcode, CSS-Spezifität, Quiz, Klausurauswahl, Einreichung, Teilpunkte, Datenwiederherstellung und getrennte Exporte. Die Browser-Schnittstellen werden im Test nachgebildet.
+Die automatisierten Tests prüfen unter anderem den DOM-Baum, Auswahlmethoden, Quellcode, CSS-Spezifität, Quiz, Klausurauswahl, Einreichung, Teilpunkte, Datenwiederherstellung und getrennte Exporte. Hinzu kommen Prüfungen für ein- und ausklappbare Bedienelemente, die Baumübersicht, den lesbaren Zoom und den vollständigen SVG-Export. Die Browser-Schnittstellen werden im automatisierten Test nachgebildet.
 
-Das Setup wurde in einem eigenen Testordner installiert, erneut ausgeführt und deinstalliert. Alle 62 installierten Programmdateien stimmten nach beiden Installationen byteweise mit dem Quellstand überein. Ein zusätzlicher Test prüft, dass das Setup fremde Dateien bei einer Aktualisierung oder Deinstallation schützt.
+Das Setup-Testskript installiert, aktualisiert und entfernt die Erweiterung in einem eigenen Testordner. Es vergleicht die installierten Programmdateien byteweise mit dem Quellstand und prüft, dass fremde Dateien bei einer Aktualisierung oder Deinstallation geschützt bleiben.
 
-Unter Windows lässt sich das Paket mit `windows/build.ps1` erzeugen und mit `windows/test-setup.ps1 -SetupPath dist/TreeHugger-1.5.0-Setup.exe` prüfen.
+Unter Windows lässt sich das Paket mit `windows/build.ps1` erzeugen und mit `windows/test-setup.ps1 -SetupPath dist/TreeHugger-1.5.2-Setup.exe` prüfen.
 
 ## Projektangaben und Fremdkomponenten
 

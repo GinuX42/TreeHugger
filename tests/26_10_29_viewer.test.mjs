@@ -122,6 +122,10 @@ class MockElement {
     this.ownerDocument.activeElement = this;
   }
 
+  getBoundingClientRect() {
+    return {left: 0, top: 0, width: this.clientWidth, height: this.clientHeight};
+  }
+
   scrollTo(left, top) {
     this.scrollLeft = typeof left === 'object' ? left.left : left;
     this.scrollTop = typeof left === 'object' ? left.top : top;
